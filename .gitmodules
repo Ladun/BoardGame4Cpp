@@ -1,0 +1,3 @@
+[submodule "third-party/DawnStar"]
+	path = third-party/DawnStar
+	url = https://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@github.com/Ladun/DawnStar.git
