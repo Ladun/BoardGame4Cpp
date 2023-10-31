@@ -2,7 +2,7 @@
 #define DS_PLATFORM_WINDOWS
 #include <DawnStar/Core/EntryPoint.hpp>
 
-#include "Graphic/GameLayer.hpp"
+#include "Game/GameLayer.hpp"
 
 class GameApp: public DawnStar::Application
 {

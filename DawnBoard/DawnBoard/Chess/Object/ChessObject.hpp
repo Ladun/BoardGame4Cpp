@@ -5,26 +5,22 @@
 
 namespace DawnBoard::Chess
 {
-    enum class PieceType {
+    enum class PieceType : uint8_t {
         PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
     };
 
-    enum class Color {
-        BLACK, WHITE
+    enum class PieceColor: uint8_t {
+        BLACK=0, WHITE=1
     };
 
     class ChessObject : public Object
     {
     public:
-        ChessObject(Pos pos, PieceType type, Color color);
-
-
-        // TODO:: ChessField쪽으로 이동.
-        std::vector<Pos> GetPossiblePosition();
-    
-    protected:
+        ChessObject(Pos pos, PieceType type, PieceColor color);
+        
         Pos m_Pos;
         PieceType m_PieceType;
-        Color m_Color;
+        PieceColor m_Color;
+
     };
 } // namespace DawnBoard::Chess

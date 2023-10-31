@@ -14,15 +14,16 @@ namespace DawnBoard
         Field() = default;
         virtual ~Field() = default;
 
-        virtual void ApplyAction(Action action) = 0;
+        virtual void Init() = 0;
+        virtual void Start() = 0;
+        virtual void Clear() = 0;
 
-        virtual void AddObject(std::shared_ptr<Object> obj) = 0;
-        virtual std::shared_ptr<Object> FindObject() = 0;
+        virtual void ApplyAction(Action& action) = 0;
 
         template<typename StateClass>
         StateClass* GetState() { return reinterpret_cast<StateClass*>(m_State.get()); }
 
-    private:
-        std::unique_ptr<FieldState> m_State;
+    protected:
+        std::unique_ptr<FieldState> m_State = nullptr;
     };
 } // namespace DawnBoard

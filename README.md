@@ -1,4 +1,4 @@
-# 5DChess4cpp
+# Board Game 4 cpp
 Repository that implements 5DChes using a personal game engine
 
 sudo apt-get update
