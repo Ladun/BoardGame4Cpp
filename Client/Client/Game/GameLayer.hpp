@@ -4,6 +4,9 @@
 #include <DawnStar/Debug/RenderStatPanel.hpp>
 #include <DawnBoard/Chess/Logic/ChessBoard.hpp>
 
+// TODO: move to DawnStar/Debug/ObjectListPanel.hpp
+#include "../Utils/ObjectListPanel.hpp"
+
 using namespace DawnStar;
 using namespace DawnBoard::Chess;
 
@@ -27,6 +30,7 @@ private:
 
 private:
 	RenderStatPanel m_StatPanel;
+	ObjectListPanel m_ObjListPanel;
 
 	Ref<ChessBoard> m_ChessBoard;
 

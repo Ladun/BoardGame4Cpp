@@ -2,16 +2,26 @@
 
 #include <DawnStar/DawnStar.hpp>
 
-using namespace DawnStar;
-
-class ObjectListPanel
+namespace DawnStar
 {
-public:
-    ObjectListPanel(Ref<Scene>& targetScene);
-    ~ObjectListPanel() = default;
 
-    void OnImGuiRender();
+    class ObjectListPanel
+    {
+    public:
+        ObjectListPanel();
+        ~ObjectListPanel() = default;
 
-private:
-    Ref<Scene> m_TargetScene;
-};    
+        void OnImGuiRender();
+
+        void SetContext(Ref<Scene>& context);
+
+    private:
+        void DrawEntityNode(Entity entity);
+
+        void DrawComponents(Entity entity);
+
+    private:
+        Ref<Scene> m_Context;
+        Entity m_SelectionEntity;
+    };    
+}
