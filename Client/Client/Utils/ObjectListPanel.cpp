@@ -6,6 +6,7 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include <cstring>
+#include <filesystem>
 
 namespace DawnStar
 {
@@ -19,15 +20,14 @@ namespace DawnStar
 	{
 
 		// Show Object List
-
-		
 		ImGui::Begin("Entity hierachy");
 		if(m_Context)
 		{
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID , m_Context.get() };
-					DrawEntityNode(entity);
+					if (entity && !entity.GetParent())
+						DrawEntityNode(entity);
 				});
 		}
 		ImGui::End();
@@ -46,26 +46,56 @@ namespace DawnStar
 		m_Context = context;
 	}
 
-	void ObjectListPanel::DrawEntityNode(Entity entity)
+	const ImRect ObjectListPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		const auto& rc = entity.GetRelationship();
 		
-		ImGuiTreeNodeFlags flags = ((m_SelectionEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((m_SelectionEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0);
+		flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		flags |= ImGuiTreeNodeFlags_FramePadding;		
+		if (rc.Children.size() == 0)
+		{
+			flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		}
+
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionEntity = entity;
 		}
 
+		ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+		verticalLineStart.x -= 10.0f;
+		verticalLineStart.y -= ImGui::GetFrameHeight() * 0.5f;
+		const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+		const ImColor treeLineColor = ImColor(159, 162, 246);
+
 		if (opened)
-		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, "%s", tag.c_str());
-			if (opened)
+		{		
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+			ImVec2 verticalLineEnd = verticalLineStart;
+			constexpr float lineThickness = 1.5f;
+
+			for (const auto& childId : rc.Children)
+			{
+				Entity child = m_Context->GetEntity(childId);
+				const float HorizontalTreeLineSize = child.GetRelationship().Children.empty() ? 18.0f : 9.0f; //chosen arbitrarily
+				const ImRect childRect = DrawEntityNode(child);
+
+				const float midpoint = (childRect.Min.y + childRect.Max.y) / 2.0f;
+				drawList->AddLine(ImVec2(verticalLineStart.x, midpoint), ImVec2(verticalLineStart.x + HorizontalTreeLineSize, midpoint), treeLineColor, lineThickness);
+				verticalLineEnd.y = midpoint;
+			}
+
+			drawList->AddLine(verticalLineStart, verticalLineEnd, treeLineColor, lineThickness);
+
+			if (opened && rc.Children.size() > 0)
 				ImGui::TreePop();
-			ImGui::TreePop();
 		}
+		return nodeRect;
 	}
 
 	template<typename T, typename UIFunction>
@@ -134,6 +164,23 @@ namespace DawnStar
 			component.Rotation = glm::radians(rotation);
 			DawnStar::ImGuiUI::DrawVec3Control("Scale", component.Scale, 1.0f);
 		});
+		
+
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		{
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));			
+
+			float frameHeight = ImGui::GetFrameHeight();
+			const float buttonSize = frameHeight * 3.0f;
+			const float tooltipSize = frameHeight * 11.0f;
+				
+			uint64_t id = component.Texture == nullptr ? 0 : component.Texture->GetRendererID();
+			ImGui::Text("Texture Id: %ld", id);
+			ImGui::ImageButton(reinterpret_cast<ImTextureID>(id), { buttonSize, buttonSize }, { 1, 1 }, { 0, 0 }, 0);
+
+			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+		});
+
 
 	}
 }

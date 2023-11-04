@@ -2,6 +2,9 @@
 
 #include <DawnStar/DawnStar.hpp>
 
+
+struct ImRect;
+
 namespace DawnStar
 {
 
@@ -16,7 +19,7 @@ namespace DawnStar
         void SetContext(Ref<Scene>& context);
 
     private:
-        void DrawEntityNode(Entity entity);
+        const ImRect DrawEntityNode(Entity entity);
 
         void DrawComponents(Entity entity);
 

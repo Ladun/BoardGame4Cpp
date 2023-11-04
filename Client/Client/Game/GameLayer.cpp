@@ -1,6 +1,8 @@
 #include <DawnStar/dspch.hpp>
 #include "GameLayer.hpp"
+
 #include "../Utils/ResourceManager.hpp"
+#include "../Utils/Utils.hpp"
 #include "CustomComponent.hpp"
 
 #include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
@@ -13,17 +15,6 @@ GameLayer::GameLayer()
     : m_StatPanel(), m_ObjListPanel()
 {
 	m_ChessBoard = CreateRef<ChessBoard>();
-}
-template<typename ... Args> 
-std::string string_format(const std::string& format, Args ... args)
-{
-	size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0' 
-	if (size <= 0) {
-		throw std::runtime_error("Error during formatting.");
-	}
-	std::unique_ptr<char[]> buf(new char[size]);
-	snprintf(buf.get(), size, format.c_str(), args ...);
-	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside }
 }
 void GameLayer::OnAttach()
 {
@@ -40,32 +31,48 @@ void GameLayer::OnAttach()
 	// Init chess board
 	m_ChessBoard->Init();
 
+
 	{ // Draw simple map
+		Entity parent = m_Scene->CreateEntity("board_parent");
+
 		for(int i = 0; i < 8; ++i)
 		{
 			for(int j = 0; j < 8; ++j)
 			{
-				Entity obj = m_Scene->CreateEntity(string_format("board-%d-%d", i, j));
-				auto& transform = obj.GetComponent<TransformComponent>();
+				Entity obj = m_Scene->CreateEntity(Utils::string_format("board-%d-%d", i, j));
+				obj.SetParent(parent);
+				
+				auto& transform = obj.GetTransform();
 				transform.Translation = {j, i, 0};
+
 				auto& sprite = obj.AddComponent<SpriteRendererComponent>();
-				sprite.Color = ((i + j) % 2 == 0)? glm::vec4(.15f, .15f, .15f, 1.0f): glm::vec4(.85f, .85f, .85f, 1.f);
+				sprite.Color = ((i + j) % 2 == 0)? glm::vec4(.98f, .83f, .64f, 1.0f): glm::vec4(.82f, .66f, .43f, 1.f);
+				sprite.SortingOrder = 1;
 			}
 		}
 	}
 	{
 		// Draw Chess 
+		Entity parent = m_Scene->CreateEntity("piece_parent");
+		auto& transform = parent.GetTransform();
+		transform.Translation = {0.0f, 0.0f, 1.0f};
+
 		auto pieces = m_ChessBoard->GetState<ChessBoardState>()->pieces;
 		for(auto piece : pieces)
 		{
 			Entity obj = m_Scene->CreateEntity(GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color));
+			obj.SetParent(parent);
+
 			auto& transform = obj.GetComponent<TransformComponent>();
-			transform.Translation = {piece->m_Pos.x, piece->m_Pos.y, 0};
+			transform.Translation = {piece->m_Pos.y, piece->m_Pos.x, 0};
+			// transform.Scale = {0.8f, 0.8f, 0.8f};
+
 			auto& sprite = obj.AddComponent<SpriteRendererComponent>();
 			sprite.Texture = ResourceManager::instance().GetTexture(
 				"pieces/" + GetTextureNameByPieceType(piece->m_PieceType,
 													  piece->m_Color)
 			);
+			sprite.SortingOrder = 2;
 			obj.AddComponent<ChessComponent>();
 
 			DS_APP_INFO("Create {0} on ({1}, {2})", 
@@ -75,13 +82,15 @@ void GameLayer::OnAttach()
 		} 
 	}
 
-	{
+	{ // Camera
 		Entity cameraObj = m_Scene->CreateEntity("Camera");
 		auto& transform = cameraObj.GetComponent<TransformComponent>();
 		transform.Translation = {4.0f, 4.0f, 12.0f};
-		auto cam = cameraObj.AddComponent<CameraComponent>();
+		auto& cam = cameraObj.AddComponent<CameraComponent>();
+		cam.Cam.SetOrthographic(10, -0.0f, 100.0f);
 	}
 
+	m_Scene->SortForSprites();	
 }
 
 void GameLayer::OnDetach()
@@ -92,7 +101,7 @@ void GameLayer::OnDetach()
 void GameLayer::OnUpdate(Timestep ts)
 {
 	Renderer2D::ResetStats();
-	RenderCommand::SetClearColor({0.3f, 0.2f, 0.1f, 1.0f});
+	RenderCommand::SetClearColor({0.4f, 0.4f, 0.4f, 1.0f});
 	RenderCommand::Clear();
 	m_Scene->OnUpdate(ts);
 }
@@ -117,7 +126,7 @@ std::string GameLayer::GetTextureNameByPieceType(PieceType type, PieceColor colo
 	switch(type)
 	{
 	case PieceType::BISHOP:
-		typeStr = "Pawn"; break;
+		typeStr = "Bishop"; break;
 	case PieceType::KNIGHT:
 		typeStr = "Knight"; break;
 	case PieceType::QUEEN:
