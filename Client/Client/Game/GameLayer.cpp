@@ -3,7 +3,8 @@
 
 #include "../Utils/ResourceManager.hpp"
 #include "../Utils/Utils.hpp"
-#include "CustomComponent.hpp"
+#include "Systems/CustomComponent.hpp"
+#include "Systems/TestSystem.hpp"
 
 #include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
 
@@ -22,7 +23,7 @@ void GameLayer::OnAttach()
 
 	m_Scene->OnViewportResize(Application::Get().GetWindow().GetWidth(),
 							  Application::Get().GetWindow().GetHeight());
-							  
+
 	m_ObjListPanel.SetContext(m_Scene);
 
 	// Load resource
@@ -30,7 +31,6 @@ void GameLayer::OnAttach()
 
 	// Init chess board
 	m_ChessBoard->Init();
-
 
 	{ // Draw simple map
 		Entity parent = m_Scene->CreateEntity("board_parent");
@@ -73,7 +73,7 @@ void GameLayer::OnAttach()
 													  piece->m_Color)
 			);
 			sprite.SortingOrder = 2;
-			obj.AddComponent<ChessComponent>();
+			obj.AddComponent<ChessGraphicComponent>();
 
 			DS_APP_INFO("Create {0} on ({1}, {2})", 
 						GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color),
@@ -87,7 +87,7 @@ void GameLayer::OnAttach()
 		auto& transform = cameraObj.GetComponent<TransformComponent>();
 		transform.Translation = {4.0f, 4.0f, 12.0f};
 		auto& cam = cameraObj.AddComponent<CameraComponent>();
-		cam.Cam.SetOrthographic(10, -0.0f, 100.0f);
+		cam.Cam.SetOrthographic(20, -0.0f, 100.0f);
 	}
 
 	m_Scene->SortForSprites();	
@@ -103,6 +103,20 @@ void GameLayer::OnUpdate(Timestep ts)
 	Renderer2D::ResetStats();
 	RenderCommand::SetClearColor({0.4f, 0.4f, 0.4f, 1.0f});
 	RenderCommand::Clear();
+
+	if(Input::IsKeyDown(Key::A))
+	{
+		DS_APP_INFO("Down");
+	}
+	if(Input::IsKey(Key::A))
+	{
+		DS_APP_INFO("Press");
+	}
+	if(Input::IsKeyUp(Key::A))
+	{
+		DS_APP_INFO("Up");
+	}
+
 	m_Scene->OnUpdate(ts);
 }
 
@@ -116,6 +130,7 @@ void GameLayer::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(OnMouseMoved));
 }
 
 std::string GameLayer::GetTextureNameByPieceType(PieceType type, PieceColor color)
@@ -146,5 +161,14 @@ bool GameLayer::OnWindowResize(WindowResizeEvent &e)
 {
 
 	m_Scene->OnViewportResize(e.GetWidth(), e.GetHeight());
+    return false;
+}
+
+bool GameLayer::OnMouseMoved(MouseMovedEvent &e)
+{
+	
+	// auto pos = Input::GetMousePosition();
+	// DS_APP_INFO("From event: ({0}, {1}), From system?: ({2}, {3}) {4}", 
+	// 			e.GetX(), e.GetY(), pos.x, pos.y, (e.GetX() == pos.x && e.GetY() == pos.y));
     return false;
 }

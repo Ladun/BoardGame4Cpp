@@ -180,6 +180,23 @@ namespace DawnStar
 
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
+		
+
+		DrawComponent<UISpriteRendererComponent>("UI Sprite Renderer", entity, [](auto& component)
+		{
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));			
+
+			float frameHeight = ImGui::GetFrameHeight();
+			const float buttonSize = frameHeight * 3.0f;
+			const float tooltipSize = frameHeight * 11.0f;
+				
+			uint64_t id = component.Texture == nullptr ? 0 : component.Texture->GetRendererID();
+			ImGui::Text("Texture Id: %ld", id);
+			ImGui::ImageButton(reinterpret_cast<ImTextureID>(id), { buttonSize, buttonSize }, { 1, 1 }, { 0, 0 }, 0);
+
+			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+		});
+
 
 
 	}

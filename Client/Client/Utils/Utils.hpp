@@ -1,11 +1,9 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
-#include <sstream>
+#include <DawnStar/DawnStar.hpp>
 
+using namespace DawnStar;
 
 class Utils
 {
@@ -17,8 +15,8 @@ public:
         std::string temp;
 
         while (std::getline(stream, temp, sep)) 
-        {
-                out.push_back(temp);
+        {   
+            out.push_back(temp);
         }
 
         return out;
@@ -34,5 +32,12 @@ public:
         std::unique_ptr<char[]> buf(new char[size]);
         snprintf(buf.get(), size, format.c_str(), args ...);
         return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside }
+    }
+
+    static glm::vec2 ToScreenCoord(glm::vec2 mousePos)
+    {
+        auto windowWidth = Application::Get().GetWindow().GetWidth();
+        auto windowHeight = Application::Get().GetWindow().GetHeight();
+        return {mousePos.x - windowWidth / 2, windowHeight - mousePos.y - windowHeight / 2};
     }
 };

@@ -2,6 +2,7 @@
 
 #include <DawnStar/DawnStar.hpp>
 #include <DawnStar/Debug/RenderStatPanel.hpp>
+
 #include <DawnBoard/Chess/Logic/ChessBoard.hpp>
 
 // TODO: move to DawnStar/Debug/ObjectListPanel.hpp
@@ -27,6 +28,7 @@ public:
 
 private:
 	bool OnWindowResize(WindowResizeEvent& e);
+	bool OnMouseMoved(MouseMovedEvent& e);
 
 private:
 	RenderStatPanel m_StatPanel;
