@@ -4,13 +4,11 @@
 #include "../Utils/ResourceManager.hpp"
 #include "../Utils/Utils.hpp"
 #include "Systems/CustomComponent.hpp"
-#include "Systems/TestSystem.hpp"
+#include "Systems/IndicatorSystem.hpp"
 
 #include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
 
 #include <imgui.h>
-
-#define BIND_EVENT_FN(x) std::bind(&GameLayer::x, this, std::placeholders::_1)
 
 GameLayer::GameLayer()
     : m_StatPanel(), m_ObjListPanel()
@@ -23,6 +21,7 @@ void GameLayer::OnAttach()
 
 	m_Scene->OnViewportResize(Application::Get().GetWindow().GetWidth(),
 							  Application::Get().GetWindow().GetHeight());
+	m_Scene->AddSystem(CreateRef<IndicatorSystem>(m_ChessBoard, m_Scene));
 
 	m_ObjListPanel.SetContext(m_Scene);
 
@@ -31,6 +30,20 @@ void GameLayer::OnAttach()
 
 	// Init chess board
 	m_ChessBoard->Init();
+
+	{
+		Entity indicator = m_Scene->CreateEntity("indicator");
+		indicator.AddComponent<IndicatorComponent>();
+
+		auto& transform = indicator.GetTransform();
+		transform.Scale = glm::vec3(0.6f);
+		transform.Translation.z = 2.0f;
+
+		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
+		sprite.Color = {0.3f, 0.8f, 0.3f, 0.5f};
+			sprite.SortingOrder = 1;
+
+	}
 
 	{ // Draw simple map
 		Entity parent = m_Scene->CreateEntity("board_parent");
@@ -47,7 +60,8 @@ void GameLayer::OnAttach()
 
 				auto& sprite = obj.AddComponent<SpriteRendererComponent>();
 				sprite.Color = ((i + j) % 2 == 0)? glm::vec4(.98f, .83f, .64f, 1.0f): glm::vec4(.82f, .66f, .43f, 1.f);
-				sprite.SortingOrder = 1;
+				sprite.SortingOrder = -1;
+				
 			}
 		}
 	}
@@ -72,7 +86,7 @@ void GameLayer::OnAttach()
 				"pieces/" + GetTextureNameByPieceType(piece->m_PieceType,
 													  piece->m_Color)
 			);
-			sprite.SortingOrder = 2;
+			sprite.SortingOrder = 0;
 			obj.AddComponent<ChessGraphicComponent>();
 
 			DS_APP_INFO("Create {0} on ({1}, {2})", 
@@ -104,19 +118,6 @@ void GameLayer::OnUpdate(Timestep ts)
 	RenderCommand::SetClearColor({0.4f, 0.4f, 0.4f, 1.0f});
 	RenderCommand::Clear();
 
-	if(Input::IsKeyDown(Key::A))
-	{
-		DS_APP_INFO("Down");
-	}
-	if(Input::IsKey(Key::A))
-	{
-		DS_APP_INFO("Press");
-	}
-	if(Input::IsKeyUp(Key::A))
-	{
-		DS_APP_INFO("Up");
-	}
-
 	m_Scene->OnUpdate(ts);
 }
 
@@ -129,8 +130,8 @@ void GameLayer::OnImGuiRender()
 void GameLayer::OnEvent(Event& e)
 {
 	EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
-	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(OnMouseMoved));
+	dispatcher.Dispatch<WindowResizeEvent>(DS_BIND_EVENT_FN(GameLayer::OnWindowResize));
+	dispatcher.Dispatch<MouseMovedEvent>(DS_BIND_EVENT_FN(GameLayer::OnMouseMoved));
 }
 
 std::string GameLayer::GetTextureNameByPieceType(PieceType type, PieceColor color)

@@ -1,20 +1,19 @@
 #include "CustomComponent.hpp"
 
-// TODO: Make macro;
-template<>
-void DawnStar::Scene::OnComponentAdded<ChessGraphicComponent>(DawnStar::Entity entity, ChessGraphicComponent& component)
-{
-    
-}
 
-template<>
-void DawnStar::Scene::OnComponentAdded<TestComponent>(DawnStar::Entity entity, TestComponent& component)
+#include <DawnStar/DawnStar.hpp>
+
+
+SCENE_ADDCOMPONENT_FUNC_HEAD(ChessGraphicComponent)
 {
 
 }
+SCENE_ADDCOMPONENT_FUNC_HEAD(TestComponent)
+{
 
-template<>
-void DawnStar::Scene::OnComponentAdded<IndicatorComponent>(DawnStar::Entity entity, IndicatorComponent& component)
+}
+
+SCENE_ADDCOMPONENT_FUNC_HEAD(IndicatorComponent)
 {
 
 }

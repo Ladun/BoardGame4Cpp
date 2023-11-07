@@ -40,4 +40,23 @@ public:
         auto windowHeight = Application::Get().GetWindow().GetHeight();
         return {mousePos.x - windowWidth / 2, windowHeight - mousePos.y - windowHeight / 2};
     }
+
+    static glm::vec2 ToScreenToWorldCoord(glm::vec2 screenPos, Entity cameraEntity)
+    {
+		auto viewProjection = cameraEntity.GetComponent<CameraComponent>().Cam.GetProjection() * 
+                              glm::inverse(cameraEntity.GetWorldTransform());
+        auto windowWidth    = Application::Get().GetWindow().GetWidth();
+        auto windowHeight   = Application::Get().GetWindow().GetHeight();
+        // Get inverse projection of camera's ViewProjection Matrix
+        viewProjection = glm::inverse(viewProjection);
+
+        // ScreenPos 자체가 중앙이 0, 좌하단이 -0.5, 우하단이 0.5로 설정이 되어 2를 곱해준다.
+        glm::vec4 ret = {(screenPos.x / windowWidth) * 2.0f, 
+                         (screenPos.y / windowHeight) * 2.0f,
+                         0.0f, 1.0f};
+
+        ret = viewProjection * ret;
+
+        return {ret.x, ret.y};
+    }
 };

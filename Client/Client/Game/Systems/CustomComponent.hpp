@@ -1,9 +1,5 @@
 #pragma once
 
-#include <DawnStar/DawnStar.hpp>
-
-
-
 struct ChessGraphicComponent
 {
     bool a;
