@@ -5,6 +5,7 @@
 #include "../Utils/Utils.hpp"
 #include "Systems/CustomComponent.hpp"
 #include "Systems/IndicatorSystem.hpp"
+#include "Systems/ChessGraphicSystem.hpp"
 
 #include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
 
@@ -22,6 +23,7 @@ void GameLayer::OnAttach()
 	m_Scene->OnViewportResize(Application::Get().GetWindow().GetWidth(),
 							  Application::Get().GetWindow().GetHeight());
 	m_Scene->AddSystem(CreateRef<IndicatorSystem>(m_ChessBoard, m_Scene));
+	m_Scene->AddSystem(CreateRef<ChessGraphicSystem>(m_ChessBoard, m_Scene));
 
 	m_ObjListPanel.SetContext(m_Scene);
 
@@ -31,7 +33,7 @@ void GameLayer::OnAttach()
 	// Init chess board
 	m_ChessBoard->Init();
 
-	{
+	{ // Indicator
 		Entity indicator = m_Scene->CreateEntity("indicator");
 		indicator.AddComponent<IndicatorComponent>();
 
@@ -41,7 +43,7 @@ void GameLayer::OnAttach()
 
 		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
 		sprite.Color = {0.3f, 0.8f, 0.3f, 0.5f};
-			sprite.SortingOrder = 1;
+		sprite.SortingOrder = 1;
 
 	}
 
@@ -59,8 +61,12 @@ void GameLayer::OnAttach()
 				transform.Translation = {j, i, 0};
 
 				auto& sprite = obj.AddComponent<SpriteRendererComponent>();
-				sprite.Color = ((i + j) % 2 == 0)? glm::vec4(.98f, .83f, .64f, 1.0f): glm::vec4(.82f, .66f, .43f, 1.f);
+				sprite.Color = ((i + j) % 2 == 1)? BOARD_BRIGHT_COLOR: BOARD_DARK_COLOR;
 				sprite.SortingOrder = -1;
+
+				auto& cg = obj.AddComponent<ChessBoardComponent>();
+				cg.x	 = j;
+				cg.y 	 = i;
 				
 			}
 		}
@@ -71,23 +77,25 @@ void GameLayer::OnAttach()
 		auto& transform = parent.GetTransform();
 		transform.Translation = {0.0f, 0.0f, 1.0f};
 
-		auto pieces = m_ChessBoard->GetState<ChessBoardState>()->pieces;
+		auto& pieces = m_ChessBoard->GetState<ChessBoardState>()->pieces;
 		for(auto piece : pieces)
 		{
 			Entity obj = m_Scene->CreateEntity(GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color));
 			obj.SetParent(parent);
 
-			auto& transform = obj.GetComponent<TransformComponent>();
-			transform.Translation = {piece->m_Pos.y, piece->m_Pos.x, 0};
+			auto& transform 		= obj.GetComponent<TransformComponent>();
+			transform.Translation 	= {piece->m_Pos.y, piece->m_Pos.x, 0};
 			// transform.Scale = {0.8f, 0.8f, 0.8f};
 
-			auto& sprite = obj.AddComponent<SpriteRendererComponent>();
-			sprite.Texture = ResourceManager::instance().GetTexture(
+			auto& sprite 	= obj.AddComponent<SpriteRendererComponent>();
+			sprite.Texture 	= ResourceManager::instance().GetTexture(
 				"pieces/" + GetTextureNameByPieceType(piece->m_PieceType,
 													  piece->m_Color)
 			);
 			sprite.SortingOrder = 0;
-			obj.AddComponent<ChessGraphicComponent>();
+
+			auto& cg 	= obj.AddComponent<ChessPieceComponent>();
+			cg.piece 	= piece;
 
 			DS_APP_INFO("Create {0} on ({1}, {2})", 
 						GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color),

@@ -3,6 +3,8 @@
 #include <DawnBoard/Chess/Utils.hpp>
 #include <DawnBoard/Base/Object.hpp>
 
+#include <vector>
+
 namespace DawnBoard::Chess
 {
     enum class PieceType : uint8_t {
@@ -21,6 +23,8 @@ namespace DawnBoard::Chess
         Pos m_Pos;
         PieceType m_PieceType;
         PieceColor m_Color;
-
+        bool m_Moved;
+        
+        std::vector<Pos> m_AvailablePos;
     };
 } // namespace DawnBoard::Chess

@@ -4,10 +4,16 @@
 #include <DawnStar/DawnStar.hpp>
 
 
-SCENE_ADDCOMPONENT_FUNC_HEAD(ChessGraphicComponent)
+SCENE_ADDCOMPONENT_FUNC_HEAD(ChessPieceComponent)
 {
 
 }
+
+SCENE_ADDCOMPONENT_FUNC_HEAD(ChessBoardComponent)
+{
+
+}
+
 SCENE_ADDCOMPONENT_FUNC_HEAD(TestComponent)
 {
 

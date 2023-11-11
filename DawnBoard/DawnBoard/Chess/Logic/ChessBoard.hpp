@@ -4,6 +4,7 @@
 
 #include <DawnBoard/Base/Field.hpp>
 #include <DawnBoard/Chess/Object/ChessObject.hpp>
+#include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
 #include <DawnBoard/Chess/Utils.hpp>
 
 namespace DawnBoard::Chess
@@ -18,14 +19,12 @@ namespace DawnBoard::Chess
         virtual void ApplyAction(Action& action);
 
         int GetPieceCount();
-        
-    private:
-        bool IsAvailablePos(Pos pos);
-        std::vector<Pos> GetPossiblePosition(Pos pos);
 
     private:
-        std::shared_ptr<ChessObject> m_SelectedObj;
-        std::vector<Pos> m_PossiblePos;
+        void UpdateBoardState();
+        void UpdateAvailablePosition(ChessObjectRef& piece, std::set<Pos>& kingsAvailablePos);
+
+        bool IsInsideTheBoard(Pos pos);
 
     };
 } // namespace DawnBoard::Chess

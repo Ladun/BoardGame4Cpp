@@ -13,6 +13,7 @@ namespace DawnBoard::Chess
         int8_t x, y;
         Pos(int8_t _x, int8_t _y): x(_x), y(_y) {}
         Pos(int _x, int _y): x(_x), y(_y) {}
+        Pos(float _x, float _y): x(_x), y(_y) {}
 
         Pos operator+(const Pos& o)
         {
@@ -27,6 +28,20 @@ namespace DawnBoard::Chess
         {
             (*this) = (*this) + o;
             return *this;
+        }
+
+        bool operator==(const Pos& o)
+        {
+            return x == o.x && y == o.y;
+        }
+        
+        bool operator!=(const Pos& o)
+        {
+            return x != o.x || y != o.y;
+        }        
+
+        bool operator < (const Pos& o) const {
+            return (x != o.x ? x < o.x : y < o.y);
         }
     };
 } // namespace DawnBoard::Chess
