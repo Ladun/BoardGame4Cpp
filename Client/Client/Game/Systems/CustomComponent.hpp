@@ -1,7 +1,7 @@
 #pragma once
 
 #include <DawnStar/DawnStar.hpp>
-#include <DawnBoard/Chess/Object/ChessObject.hpp>
+#include <DawnBoard/Chess/ChessObject.hpp>
 
 using namespace DawnStar;
 using namespace DawnBoard::Chess;
@@ -9,7 +9,7 @@ using namespace DawnBoard::Chess;
 #pragma region Chess graphical component
 struct ChessPieceComponent
 {
-    Ref<ChessObject> piece;    
+    ChessObjectRef piece;    
 };
 
 struct ChessBoardComponent

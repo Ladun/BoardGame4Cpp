@@ -5,12 +5,10 @@
 #include <map>
 
 #include <DawnBoard/Base/DataStruct.hpp>
-#include <DawnBoard/Chess/Object/ChessObject.hpp>
+#include <DawnBoard/Chess/ChessObject.hpp>
 
 namespace DawnBoard::Chess
 {
-
-    using ChessObjectRef = std::shared_ptr<ChessObject>;
 
     struct BoardInfo
     {
@@ -31,5 +29,16 @@ namespace DawnBoard::Chess
 
         // Check for en passant
         Pos lastPawnPos     = {-1, -1};
+
+        // Check state
+        bool isCheck[2] = {false, false};
+
+        // Rendering value
+        bool isUpdated = false;
+    };
+
+    struct Movement
+    {
+        // Add en passant state and castling state
     };
 } // namespace DawnBoard::Chess

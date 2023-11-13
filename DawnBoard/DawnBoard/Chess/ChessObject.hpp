@@ -4,6 +4,7 @@
 #include <DawnBoard/Base/Object.hpp>
 
 #include <vector>
+#include <memory>
 
 namespace DawnBoard::Chess
 {
@@ -26,5 +27,7 @@ namespace DawnBoard::Chess
         bool m_Moved;
         
         std::vector<Pos> m_AvailablePos;
+        std::vector<Pos> m_KillerPos; //position of which can capture this piece
     };
+    using ChessObjectRef = std::shared_ptr<ChessObject>;
 } // namespace DawnBoard::Chess

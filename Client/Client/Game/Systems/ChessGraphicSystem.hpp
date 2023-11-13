@@ -2,7 +2,7 @@
 
 #include <DawnStar/DawnStar.hpp>
 
-#include <DawnBoard/Chess/Logic/ChessBoard.hpp>
+#include <DawnBoard/Chess/ChessBoard.hpp>
 
 using namespace DawnStar;
 using namespace DawnBoard::Chess;

@@ -1,5 +1,5 @@
 
-#include <DawnBoard/Chess/Object/ChessObject.hpp>
+#include <DawnBoard/Chess/ChessObject.hpp>
 #include "ChessObject.hpp"
 
 namespace DawnBoard::Chess

@@ -17,12 +17,12 @@ namespace DawnBoard::Chess
     struct SelectAction : public ChessAction
     {
         Pos pos;
-        SelectAction(Pos p) : pos(p) {}
+        SelectAction(Pos p) : pos(p) { type = ActionType::SELECT; }
     };
 
     struct MoveAction : public ChessAction
     {
         Pos dst;
-        MoveAction(Pos p) : dst(p) {}
+        MoveAction(Pos p) : dst(p) { type = ActionType::MOVE; }
     };
 } // namespace DawnBoard::Chess

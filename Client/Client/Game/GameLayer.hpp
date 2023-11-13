@@ -4,7 +4,7 @@
 #include <DawnStar/Debug/RenderStatPanel.hpp>
 #include <DawnStar/Debug/ObjectListPanel.hpp>
 
-#include <DawnBoard/Chess/Logic/ChessBoard.hpp>
+#include <DawnBoard/Chess/ChessBoard.hpp>
 
 // TODO: move to DawnStar/Debug/ObjectListPanel.hpp
 

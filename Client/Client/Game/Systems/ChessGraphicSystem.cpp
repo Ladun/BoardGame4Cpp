@@ -4,7 +4,7 @@
 #include "../../Utils/Utils.hpp"
 #include "CustomComponent.hpp"
 
-#include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
+#include <DawnBoard/Chess/ChessBoardState.hpp>
 
 ChessGraphicSystem::ChessGraphicSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> scene)
     : m_ChessBoard(chessBoard), m_Scene(scene)

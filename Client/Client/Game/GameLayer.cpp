@@ -7,7 +7,7 @@
 #include "Systems/IndicatorSystem.hpp"
 #include "Systems/ChessGraphicSystem.hpp"
 
-#include <DawnBoard/Chess/Logic/ChessBoardState.hpp>
+#include <DawnBoard/Chess/ChessBoardState.hpp>
 
 #include <imgui.h>
 
@@ -78,7 +78,7 @@ void GameLayer::OnAttach()
 		transform.Translation = {0.0f, 0.0f, 1.0f};
 
 		auto& pieces = m_ChessBoard->GetState<ChessBoardState>()->pieces;
-		for(auto piece : pieces)
+		for(auto& piece : pieces)
 		{
 			Entity obj = m_Scene->CreateEntity(GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color));
 			obj.SetParent(parent);
