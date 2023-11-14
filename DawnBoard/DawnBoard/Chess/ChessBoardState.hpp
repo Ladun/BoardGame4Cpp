@@ -14,7 +14,6 @@ namespace DawnBoard::Chess
     {
         ChessObjectRef piece = nullptr;
         bool boardSelected = false;
-
     };
 
     struct ChessBoardState : public FieldState
@@ -28,17 +27,22 @@ namespace DawnBoard::Chess
         std::shared_ptr<ChessObject> selectedObj = {};
 
         // Check for en passant
-        Pos lastPawnPos     = {-1, -1};
-
+        Pos lastEnPassantPos    = {-1, -1};
         // Check state
-        bool isCheck[2] = {false, false};
-
+        bool isCheck[2]         = {false, false};
         // Rendering value
-        bool isUpdated = false;
+        bool needRender         = false;
     };
+
 
     struct Movement
     {
+        static const uint8_t CHECKABLE = 1;
+        static const uint8_t ENPASSANT = 2;
+        static const uint8_t CASTLING = 4;
+
+        Pos pos;
+        uint8_t state;
         // Add en passant state and castling state
     };
 } // namespace DawnBoard::Chess

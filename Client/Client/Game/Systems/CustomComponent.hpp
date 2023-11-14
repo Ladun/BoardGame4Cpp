@@ -26,5 +26,7 @@ struct TestComponent
 struct IndicatorComponent
 {
 	int posX, posY;
+    
+    int testIdx = 0;
 
 };

@@ -47,6 +47,25 @@ void GameLayer::OnAttach()
 
 	}
 
+	{ // Test Indicator
+		for(int i = 0; i< 2; ++i)
+		{
+			Entity indicator = m_Scene->CreateEntity("indicator2");
+			auto& ic = indicator.AddComponent<IndicatorComponent>();
+			ic.testIdx = i + 1;
+
+			auto& transform = indicator.GetTransform();
+			transform.Scale = glm::vec3(0.4f);
+			transform.Translation = {10, 10 + i , 2.0f};
+
+			auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
+			sprite.Color = {glm::vec3(i), 0.0f};
+			sprite.SortingOrder = 1;
+		}
+
+	}
+
+
 	{ // Draw simple map
 		Entity parent = m_Scene->CreateEntity("board_parent");
 
@@ -84,7 +103,7 @@ void GameLayer::OnAttach()
 			obj.SetParent(parent);
 
 			auto& transform 		= obj.GetComponent<TransformComponent>();
-			transform.Translation 	= {piece->m_Pos.y, piece->m_Pos.x, 0};
+			transform.Translation 	= {piece->m_Pos.x, piece->m_Pos.y, 0};
 			// transform.Scale = {0.8f, 0.8f, 0.8f};
 
 			auto& sprite 	= obj.AddComponent<SpriteRendererComponent>();

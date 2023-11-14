@@ -25,6 +25,7 @@ namespace DawnBoard::Chess
         PieceType m_PieceType;
         PieceColor m_Color;
         bool m_Moved;
+        bool m_Captured;
         
         std::vector<Pos> m_AvailablePos;
         std::vector<Pos> m_KillerPos; //position of which can capture this piece

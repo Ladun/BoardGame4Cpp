@@ -14,16 +14,34 @@ ChessGraphicSystem::ChessGraphicSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> s
 void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
     // TODO: Add "Update your graphics components only when your chessboard is updated";
+    if(!m_ChessBoard->GetState<ChessBoardState>()->needRender)
+        return;
 
     // Piece update
     const auto view1 = registry.view<TransformComponent, ChessPieceComponent>();
-    for(auto &&[entity, transform, pieceInfo] : view1.each())
+    for(auto it = view1.begin(); it != view1.end();)
     {
-        transform.Translation = {pieceInfo.piece->m_Pos.x, 
-                                 pieceInfo.piece->m_Pos.y, 
-                                 transform.Translation.z};
-
+        auto &&[transform, pieceInfo] = view1.get(*it);
+        if(pieceInfo.piece->m_Captured)
+        {
+            m_Scene->DestroyEntity({*it, m_Scene.get()});
+        }
+        else
+        {
+            transform.Translation = {pieceInfo.piece->m_Pos.x, 
+                                     pieceInfo.piece->m_Pos.y, 
+                                     transform.Translation.z};
+            it++;                                     
+        }
     }
+
+    // for(auto &&[entity, transform, pieceInfo] : view1.each())
+    // {
+    //     transform.Translation = {pieceInfo.piece->m_Pos.x, 
+    //                              pieceInfo.piece->m_Pos.y, 
+    //                              transform.Translation.z};
+
+    // }
     
     // Board update
     const auto view2 = registry.view<SpriteRendererComponent, ChessBoardComponent>();
@@ -45,4 +63,6 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
                             BOARD_DARK_COLOR;
         }
     }
+
+    m_ChessBoard->GetState<ChessBoardState>()->needRender = false;
 }

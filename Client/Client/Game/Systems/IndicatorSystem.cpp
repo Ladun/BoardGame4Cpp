@@ -13,11 +13,17 @@ IndicatorSystem::IndicatorSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> scene)
 
 void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
-    const auto view = registry.view<TransformComponent, IndicatorComponent>();
+    const auto view = registry.view<TransformComponent, SpriteRendererComponent, IndicatorComponent>();
     const auto& state = m_ChessBoard->GetState<ChessBoardState>();
 
-    for(auto &&[entity, transform, indicator] : view.each())
+    for(auto &&[entity, transform, sprite, indicator] : view.each())
     {
+        if(indicator.testIdx > 0)
+        {
+            auto state = m_ChessBoard->GetState<ChessBoardState>();
+            sprite.Color.a = static_cast<float>(state->isCheck[indicator.testIdx - 1]);
+            continue;
+        }
         
         if(Input::IsMouseButtonDown(Mouse::Any))
         {
@@ -33,8 +39,6 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
                 transform.Translation.x = pos.x;
                 transform.Translation.y = pos.y;
 
-
-                DS_APP_DEBUG("select action: {0}, {1}", pos.x, pos.y);
                 auto act = SelectAction({pos.x, pos.y});
                 m_ChessBoard->ApplyAction(act);
             }
@@ -42,7 +46,6 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
             {
                 if(state->selectedObj != nullptr)
                 {
-                    DS_APP_DEBUG("move action: {0}, {1}", pos.x, pos.y);
                     auto act = MoveAction({pos.x, pos.y});
                     m_ChessBoard->ApplyAction(act);
                 }

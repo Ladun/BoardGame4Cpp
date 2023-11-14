@@ -109,6 +109,8 @@ namespace DawnBoard::Chess
             {
                 state->square[pos.y][pos.x].boardSelected = true;
             }
+
+            state->needRender = true;
             break;
         }
 
@@ -116,6 +118,18 @@ namespace DawnBoard::Chess
         {
             auto& act = reinterpret_cast<MoveAction&>(action); 
             if(state->selectedObj == nullptr)
+                break;
+
+            bool movable = false;
+            for (auto& pos : state->selectedObj->m_AvailablePos)
+            {
+                if(pos == act.dst)
+                {
+                    movable = true;
+                    break;
+                }                
+            }
+            if(!movable)
                 break;
 
             Move(state->selectedObj, act.dst);
@@ -127,6 +141,7 @@ namespace DawnBoard::Chess
             state->selectedObj = nullptr;
             UpdateBoardState();
 
+            state->needRender = true;
             break;
         }
         }
@@ -138,10 +153,21 @@ namespace DawnBoard::Chess
 
         Pos src = piece->m_Pos;
         int srcIdx = static_cast<int>(piece->m_Color);
+        piece->m_Moved = true;
 
         if(state->square[dst.y][dst.x].piece != nullptr)
         {
-            // TODO: do something
+            // captured piece
+            // TODO: need optimization
+            for(auto it = state->pieces.begin(); it != state->pieces.end(); it++)
+            {
+                if((*it)->m_Pos == dst)
+                {
+                    (*it)->m_Captured = true;
+                    state->pieces.erase(it);
+                    break;
+                }
+            }
         }
 
         // Apply move on board
@@ -291,7 +317,7 @@ namespace DawnBoard::Chess
             if(piece->m_PieceType == PieceType::PAWN)
             {
                 Pos move[] = {
-                    {0, 1}, {0, 2}, {1, 2}, {-1, 2} , {1, 1}, {-1, 1}
+                    {0, 1}, {0, 2}, {1, 1}, {-1, 1}
                 };
                 Pos p{0, 0};
                 
@@ -310,15 +336,18 @@ namespace DawnBoard::Chess
                     AddAvailablePosition(p, piece, MOVE_TO_EMPTY, &kingsAvailablePos, state);
                 }
                 
-                for(int i = 2; i < 6; ++i)
+                for(int i = 2; i < 4; ++i)
                 {
                     Pos p = piece->m_Pos + move[i];
                     
-                    // En passant condition
-                    if(i >= 4 && state->lastPawnPos != p)
-                        continue;
                     
-                    AddAvailablePosition(p, piece, MOVE_TO_ENEMY, &kingsAvailablePos, state);
+                    auto moveState = MOVE_TO_ENEMY;
+                    // En passant condition
+                    if(state->lastEnPassantPos == p)
+                        moveState |= MOVE_TO_EMPTY;
+
+                    AddAvailablePosition(p, piece, MOVE_TO_ENEMY,
+                                         &kingsAvailablePos, state);
                 }
             }
             else if(piece->m_PieceType == PieceType::KNIGHT)
