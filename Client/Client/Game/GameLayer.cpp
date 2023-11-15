@@ -62,12 +62,36 @@ void GameLayer::OnAttach()
 			sprite.Color = {glm::vec3(i), 0.0f};
 			sprite.SortingOrder = 1;
 		}
+		Entity indicator = m_Scene->CreateEntity("indicator3");
+		auto& ic = indicator.AddComponent<IndicatorComponent>();
+		ic.testIdx = 2;
+
+		auto& transform = indicator.GetTransform();
+		transform.Scale = glm::vec3(0.4f);
+		transform.Translation = {10, 10 + 2 , 2.0f};
+
+		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
+		sprite.Color = {1.0f, 0.7f, 0.3f, 0.0f};
+		sprite.SortingOrder = 1;
 
 	}
 
 
 	{ // Draw simple map
 		Entity parent = m_Scene->CreateEntity("board_parent");
+		
+		{
+			Entity obj = m_Scene->CreateEntity("board-back");
+			obj.SetParent(parent);
+
+			auto& transform = obj.GetTransform();
+			transform.Translation = {3.5f, 3.5f, -0.1};
+			transform.Scale = {8.5, 8.5, 1};
+
+			auto& sprite = obj.AddComponent<SpriteRendererComponent>();
+			sprite.Color = {glm::vec3(0.2f), 1.f};
+			sprite.SortingOrder = -1;
+		}
 
 		for(int i = 0; i < 8; ++i)
 		{
@@ -128,7 +152,7 @@ void GameLayer::OnAttach()
 		auto& transform = cameraObj.GetComponent<TransformComponent>();
 		transform.Translation = {4.0f, 4.0f, 12.0f};
 		auto& cam = cameraObj.AddComponent<CameraComponent>();
-		cam.Cam.SetOrthographic(20, -0.0f, 100.0f);
+		cam.Cam.SetOrthographic(20, -100.0f, 100.0f);
 	}
 
 	m_Scene->SortForSprites();	

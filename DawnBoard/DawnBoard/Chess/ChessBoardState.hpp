@@ -32,17 +32,7 @@ namespace DawnBoard::Chess
         bool isCheck[2]         = {false, false};
         // Rendering value
         bool needRender         = false;
-    };
 
-
-    struct Movement
-    {
-        static const uint8_t CHECKABLE = 1;
-        static const uint8_t ENPASSANT = 2;
-        static const uint8_t CASTLING = 4;
-
-        Pos pos;
-        uint8_t state;
-        // Add en passant state and castling state
+        PieceColor currentColor = PieceColor::WHITE;
     };
 } // namespace DawnBoard::Chess

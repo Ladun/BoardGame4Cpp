@@ -6,8 +6,6 @@
 
 #include <DawnBoard/Chess/ChessBoard.hpp>
 
-// TODO: move to DawnStar/Debug/ObjectListPanel.hpp
-
 using namespace DawnStar;
 using namespace DawnBoard::Chess;
 

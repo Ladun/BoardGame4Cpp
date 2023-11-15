@@ -85,14 +85,14 @@ namespace DawnBoard::Chess
             if(state->selectedObj != nullptr)
             {
                 // Reset board highlight
-                for (auto& pos : state->selectedObj->m_AvailablePos)
+                for (auto& move : state->selectedObj->m_AvailableMove)
                 {
+                    Pos pos = move.pos;
                     state->square[pos.y][pos.x].boardSelected = false;
                 }
                 
                 // If select same position, just release the selected object
                 auto prevPos = state->selectedObj->m_Pos;
-
                 state->selectedObj = nullptr;
                 if(prevPos == act.pos)
                 {
@@ -105,8 +105,16 @@ namespace DawnBoard::Chess
                 break;
 
             // Highlight the board;
-            for (auto& pos : state->selectedObj->m_AvailablePos)
+            for (auto& move : state->selectedObj->m_AvailableMove)
             {
+                Pos pos = move.pos;
+
+                // If 'check', move must make the 'check'
+                auto& tar = state->square[pos.y][pos.x].piece;
+                if(state->isCheck[ColorToInt(state->selectedObj->m_Color)] && 
+                   !(tar != nullptr && tar->m_MakeCheck))
+                   continue;
+
                 state->square[pos.y][pos.x].boardSelected = true;
             }
 
@@ -121,8 +129,9 @@ namespace DawnBoard::Chess
                 break;
 
             bool movable = false;
-            for (auto& pos : state->selectedObj->m_AvailablePos)
+            for (auto& move : state->selectedObj->m_AvailableMove)
             {
+                Pos pos = move.pos;
                 if(pos == act.dst)
                 {
                     movable = true;
@@ -134,8 +143,9 @@ namespace DawnBoard::Chess
 
             Move(state->selectedObj, act.dst);
             // Reset board highlight
-            for (auto& pos : state->selectedObj->m_AvailablePos)
+            for (auto& move : state->selectedObj->m_AvailableMove)
             {
+                Pos pos = move.pos;
                 state->square[pos.y][pos.x].boardSelected = false;
             }
             state->selectedObj = nullptr;
@@ -232,6 +242,28 @@ namespace DawnBoard::Chess
         {
             UpdateAvailablePosition(state->kings[i], kingsAvailablePos[i]);
         }
+
+        // TODO: Check the checkmate
+        int color = (ColorToInt(state->currentColor) + 1) % 2;
+        state->currentColor = IntToColor(color);
+        if(state->isCheck[color])
+        {
+            int availableMoveCnt = state->kings[color]->m_AvailableMove.size();
+            if(availableMoveCnt > 0)
+            {
+                // No problem
+            }
+            else
+            {
+                
+                for(auto piece : state->pieces)
+                {
+                    if(piece->m_Color != state->currentColor)
+                        continue;
+                    
+                }
+            }
+        }
     }
 
     bool ChessBoard::AddAvailablePosition(Pos pos, ChessObjectRef& piece, MoveCondition cond,
@@ -247,8 +279,10 @@ namespace DawnBoard::Chess
         bool enemyCond = dst != nullptr && dst->m_Color != piece->m_Color && (cond & MOVE_TO_ENEMY);
 
         // If both condition is false, return false
+        // Is not empty and is not enemy
         if(!emptyCond && !enemyCond)
             return false;
+        Movement::State moveState = Movement::State::NORMAL;
 
         if(kingsAvailablePos != nullptr)
         {
@@ -257,6 +291,7 @@ namespace DawnBoard::Chess
             if (pos == state->kings[idx]->m_Pos)
             {
                 state->isCheck[idx] = true;
+                piece->m_MakeCheck = true;
             }
 
             auto iter = kingsAvailablePos->find(pos);
@@ -265,7 +300,7 @@ namespace DawnBoard::Chess
                 kingsAvailablePos->erase(iter);
             }
         }
-        piece->m_AvailablePos.emplace_back(pos.x, pos.y);
+        piece->m_AvailableMove.emplace_back(Pos{pos.x, pos.y}, Movement::State::NORMAL);
 
         return true;
     }
@@ -275,7 +310,9 @@ namespace DawnBoard::Chess
         ChessBoardState* state = GetState<ChessBoardState>();
 
         // Remove previous available position
-        piece->m_AvailablePos.clear();
+        // And reset other states.
+        piece->m_AvailableMove.clear();
+        piece->m_MakeCheck = false;
 
         // Checking movement type
         bool isSlidingMovement = (piece->m_PieceType == PieceType::ROOK ||
@@ -305,8 +342,10 @@ namespace DawnBoard::Chess
                 {
                     curPos += move[i];
 
-                    if(!AddAvailablePosition(curPos, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY,
-                                             &kingsAvailablePos, state))
+                    bool isAdd = AddAvailablePosition(curPos, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY,
+                                                      &kingsAvailablePos, state);
+
+                    if(!isAdd || state->square[curPos.y][curPos.x].piece != nullptr) 
                         break;
                 }
             }

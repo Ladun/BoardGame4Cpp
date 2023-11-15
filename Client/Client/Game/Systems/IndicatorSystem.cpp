@@ -18,12 +18,20 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
 
     for(auto &&[entity, transform, sprite, indicator] : view.each())
     {
-        if(indicator.testIdx > 0)
+        auto state = m_ChessBoard->GetState<ChessBoardState>();
+        if(indicator.testIdx >= 2)
         {
-            auto state = m_ChessBoard->GetState<ChessBoardState>();
+
+            continue;
+
+        }
+        else if(indicator.testIdx > 0)
+        {
             sprite.Color.a = static_cast<float>(state->isCheck[indicator.testIdx - 1]);
             continue;
         }
+
+        sprite.Color.a = state->selectedObj == nullptr? 0: 0.5f;
         
         if(Input::IsMouseButtonDown(Mouse::Any))
         {
@@ -56,8 +64,6 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
         
             int axisX = -static_cast<int>(Input::IsKeyDown(Key::A)) + static_cast<int>(Input::IsKeyDown(Key::D));
             int axisY = -static_cast<int>(Input::IsKeyDown(Key::S)) + static_cast<int>(Input::IsKeyDown(Key::W));
-
-            // TODO: KeyDown, KeyUp, Key implementation
 
             transform.Translation.x += axisX;
             transform.Translation.y += axisY;

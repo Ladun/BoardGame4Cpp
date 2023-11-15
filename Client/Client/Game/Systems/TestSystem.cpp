@@ -13,7 +13,6 @@ void TestSystem::OnUpdate(Timestep ts, entt::registry& registry)
     {
         auto pos = Input::GetMousePosition();
         
-        // TODO: Convert to ui screen coordinate from window coordinate;
         // TODO: Mouse chasing is delayed..;;
         transform.Translation = {pos.x - windowWidth / 2, windowHeight - pos.y - windowHeight / 2, 0.0f};
 

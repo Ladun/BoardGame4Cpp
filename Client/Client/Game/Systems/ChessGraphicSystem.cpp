@@ -13,7 +13,6 @@ ChessGraphicSystem::ChessGraphicSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> s
 
 void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
-    // TODO: Add "Update your graphics components only when your chessboard is updated";
     if(!m_ChessBoard->GetState<ChessBoardState>()->needRender)
         return;
 
