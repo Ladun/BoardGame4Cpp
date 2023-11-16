@@ -21,7 +21,7 @@ namespace DawnBoard::Chess
         virtual void Start();
         virtual void Clear();
 
-        virtual void ApplyAction(Action& action);
+        virtual bool ApplyAction(Action& action);
 
         int GetPieceCount();
 
@@ -31,7 +31,7 @@ namespace DawnBoard::Chess
         
         // Movement creation
         void UpdateBoardState();
-        bool AddAvailablePosition(Pos pos, ChessObjectRef& piece, MoveCondition cond, 
+        bool AddAvailablePosition(Pos pos, ChessObjectRef& piece, MoveCondition cond, int stPosIdx,
                                   std::set<Pos>* kingsAvailablePos, ChessBoardState* state);
         void UpdateAvailablePosition(ChessObjectRef& piece, std::set<Pos>& kingsAvailablePos);
 

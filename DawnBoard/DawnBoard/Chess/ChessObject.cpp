@@ -10,4 +10,13 @@ namespace DawnBoard::Chess
 
     }
 
+    int PieceColorToInt(PieceColor c)
+    { 
+        return static_cast<int>(c);
+    }
+    PieceColor IntToPieceColor(int c) 
+    { 
+        return static_cast<PieceColor>(c);
+    }
+
 } // namespace DawnBoard

@@ -91,6 +91,9 @@ void GameLayer::OnAttach()
 			auto& sprite = obj.AddComponent<SpriteRendererComponent>();
 			sprite.Color = {glm::vec3(0.2f), 1.f};
 			sprite.SortingOrder = -1;
+
+			auto& cg = obj.AddComponent<ChessBoardComponent>();
+			cg.back = true;
 		}
 
 		for(int i = 0; i < 8; ++i)
@@ -139,10 +142,6 @@ void GameLayer::OnAttach()
 
 			auto& cg 	= obj.AddComponent<ChessPieceComponent>();
 			cg.piece 	= piece;
-
-			DS_APP_INFO("Create {0} on ({1}, {2})", 
-						GetTextureNameByPieceType(piece->m_PieceType, piece->m_Color),
-						piece->m_Pos.x, piece->m_Pos.y);
 
 		} 
 	}

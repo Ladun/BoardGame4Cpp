@@ -31,8 +31,10 @@ namespace DawnBoard::Chess
         // Check state
         bool isCheck[2]         = {false, false};
         // Rendering value
-        bool needRender         = false;
+        bool needRender         = true;
 
+        // Current color player's state
         PieceColor currentColor = PieceColor::WHITE;
+        std::set<Pos> posToDefCheck;
     };
 } // namespace DawnBoard::Chess

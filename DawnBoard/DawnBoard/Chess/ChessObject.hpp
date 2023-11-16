@@ -16,8 +16,8 @@ namespace DawnBoard::Chess
     enum class PieceColor: uint8_t {
         BLACK=0, WHITE=1
     };
-    static int ColorToInt(PieceColor c) { return static_cast<int>(p);}
-    static PieceColor IntToColor(int c) { return static_cast<PieceColor>(p);}
+    int PieceColorToInt(PieceColor c);
+    PieceColor IntToPieceColor(int c);
 
     struct Movement
     {
@@ -45,8 +45,6 @@ namespace DawnBoard::Chess
         PieceColor m_Color;
         bool m_Moved;
         bool m_Captured;
-        // Current piece make the check;
-        bool m_MakeCheck;
         
         std::vector<Movement> m_AvailableMove;
         std::vector<Pos> m_KillerPos; //position of which can capture this piece

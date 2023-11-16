@@ -15,6 +15,7 @@ struct ChessPieceComponent
 struct ChessBoardComponent
 {
     int8_t x, y;
+    bool back=false;
 };
 #pragma endregion
 

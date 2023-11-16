@@ -19,4 +19,7 @@ private:
     Ref<ChessBoard> m_ChessBoard;
     Ref<Scene> m_Scene;
 
+    // TODO: test code, for single
+    PieceColor m_CurrentPlayer;
+
 };

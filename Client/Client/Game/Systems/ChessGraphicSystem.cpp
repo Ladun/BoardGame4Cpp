@@ -39,27 +39,36 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
     //     transform.Translation = {pieceInfo.piece->m_Pos.x, 
     //                              pieceInfo.piece->m_Pos.y, 
     //                              transform.Translation.z};
-
     // }
     
+    DS_APP_DEBUG("Board graphic Update");
     // Board update
     const auto view2 = registry.view<SpriteRendererComponent, ChessBoardComponent>();
-    for(auto &&[entity, sprite, boardInfo] : view2.each())
+    for(auto &&[entity, sprite, chessBoardCom] : view2.each())
     {
         ChessBoardState* state = m_ChessBoard->GetState<ChessBoardState>();
-        BoardInfo info = state->square[boardInfo.y][boardInfo.x];
+        BoardInfo info = state->square[chessBoardCom.y][chessBoardCom.x];
 
-        if(info.boardSelected)
-        {
-            sprite.Color = (boardInfo.x + boardInfo.y) % 2 == 1? 
-                            BOARD_BRIGHT_SELECTED_COLOR :
-                            BOARD_DARK_SELECTED_COLOR;
+        if(chessBoardCom.back)
+        {    
+            int color = PieceColorToInt(state->currentColor) ;
+            sprite.Color = {glm::vec3(color - 0.2f * (color - 0.5f) * 2), 1.0f};
         }
-        else
+        else 
         {
-            sprite.Color = (boardInfo.x + boardInfo.y) % 2 == 1? 
-                            BOARD_BRIGHT_COLOR :
-                            BOARD_DARK_COLOR;
+
+            if(info.boardSelected)
+            {
+                sprite.Color = (chessBoardCom.x + chessBoardCom.y) % 2 == 1? 
+                                BOARD_BRIGHT_SELECTED_COLOR :
+                                BOARD_DARK_SELECTED_COLOR;
+            }
+            else
+            {
+                sprite.Color = (chessBoardCom.x + chessBoardCom.y) % 2 == 1? 
+                                BOARD_BRIGHT_COLOR :
+                                BOARD_DARK_COLOR;
+            }
         }
     }
 

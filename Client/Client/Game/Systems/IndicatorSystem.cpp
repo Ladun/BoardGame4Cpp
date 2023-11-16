@@ -7,7 +7,7 @@
 #include <DawnBoard/Chess/ChessAction.hpp>
 
 IndicatorSystem::IndicatorSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> scene)
-    : m_ChessBoard(chessBoard), m_Scene(scene)
+    : m_ChessBoard(chessBoard), m_Scene(scene), m_CurrentPlayer(PieceColor::WHITE)
 {
 }
 
@@ -47,15 +47,20 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
                 transform.Translation.x = pos.x;
                 transform.Translation.y = pos.y;
 
-                auto act = SelectAction({pos.x, pos.y});
+                auto act = SelectAction({pos.x, pos.y}, m_CurrentPlayer);
                 m_ChessBoard->ApplyAction(act);
             }
             else if(Input::IsMouseButtonDown(Mouse::ButtonRight))
             {
                 if(state->selectedObj != nullptr)
                 {
-                    auto act = MoveAction({pos.x, pos.y});
-                    m_ChessBoard->ApplyAction(act);
+                    auto act = MoveAction({pos.x, pos.y}, m_CurrentPlayer);
+                    // TODO: maybe delete, current just for single
+                    if(m_ChessBoard->ApplyAction(act))
+                    {
+                        int color = (PieceColorToInt(m_CurrentPlayer) + 1) % 2;
+                        m_CurrentPlayer = IntToPieceColor(color);
+                    }
                 }
             }
         }
