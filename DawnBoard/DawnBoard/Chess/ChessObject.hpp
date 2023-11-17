@@ -46,8 +46,9 @@ namespace DawnBoard::Chess
         bool m_Moved;
         bool m_Captured;
         
+        // About estimating movements
         std::vector<Movement> m_AvailableMove;
-        std::vector<Pos> m_KillerPos; //position of which can capture this piece
+        bool m_CanMove;
     };
     using ChessObjectRef = std::shared_ptr<ChessObject>;
 } // namespace DawnBoard::Chess

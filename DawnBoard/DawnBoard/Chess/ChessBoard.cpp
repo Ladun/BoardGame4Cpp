@@ -26,19 +26,19 @@ namespace DawnBoard::Chess
             {
                 // Spawn pawn
                 auto p1 = std::make_shared<ChessObject>(
-                    Pos(c, 1 + k * 5),
+                    Pos(c, 1 + !k * 5),
                     PieceType::PAWN,
                     static_cast<PieceColor>(k)
                 );                
-                state->square[1 + k * 5][c].piece = p1;
+                state->square[1 + !k * 5][c].piece = p1;
                 state->pieces.push_back(p1);
                 // Spawn other pieces 
                 auto p2 = std::make_shared<ChessObject>(
-                    Pos(c, 0 + k * 7),
+                    Pos(c, 0 + !k * 7),
                     static_cast<PieceType>(type[c]),
                     static_cast<PieceColor>(k)
                 );
-                state->square[0 + k * 7][c].piece = p2;
+                state->square[0 + !k * 7][c].piece = p2;
                 state->pieces.push_back(p2);
                 // King stores in other array
                 if(type[c] == 5)
@@ -119,7 +119,6 @@ namespace DawnBoard::Chess
                 Pos pos = move.pos;
 
                 // If 'check', move must make the 'check'
-                auto& tar = state->square[pos.y][pos.x].piece;
                 if(state->isCheck[PieceColorToInt(state->selectedObj->m_Color)] && 
                    !(state->posToDefCheck.contains(pos)))
                    continue;
@@ -162,6 +161,12 @@ namespace DawnBoard::Chess
             }
             state->selectedObj = nullptr;
             UpdateBoardState();
+            ChangeColor();
+
+            if(IsCheckmate())
+            {
+                std::cout << "Checkmate!, " << static_cast<int>(state->currentColor) << " lose\n";
+            }
 
             state->needRender = true;
             return true;
@@ -222,6 +227,14 @@ namespace DawnBoard::Chess
         for(int i = 0; i < 2; ++i)
         {
             state->isCheck[i] = false;
+        }        
+
+        // Remove previous available position
+        // And reset other states.
+        for(auto& piece : state->pieces)
+        {
+            piece->m_AvailableMove.clear();
+            piece->m_CanMove = true;
         }
 
         // Calculate initial king's available position to check 'checkmate' and 'check'.
@@ -243,7 +256,7 @@ namespace DawnBoard::Chess
         }
 
         // Update all piece's available positions;
-        for(auto piece : state->pieces)
+        for(auto& piece : state->pieces)
         {   
             if(piece->m_PieceType != PieceType::KING)
             {
@@ -256,38 +269,6 @@ namespace DawnBoard::Chess
         for(int i = 0; i < 2; ++i)
         {
             UpdateAvailablePosition(state->kings[i], kingsAvailablePos[i]);
-        }
-
-        // Checking checkmate
-        //TODO: under the Move function in ApplyAction
-        int color = (PieceColorToInt(state->currentColor) + 1) % 2;
-        state->currentColor = IntToPieceColor(color);
-        // TODO: Create Checkmate function and move to under the Move function in ApplyAction
-        if(state->isCheck[color])
-        {
-            int availableMoveCnt = state->kings[color]->m_AvailableMove.size();
-            if(availableMoveCnt == 0)
-            {                
-                for(auto& piece : state->pieces)
-                {
-                    if(piece->m_Color != state->currentColor)
-                        continue;
-                    for(auto& move :piece->m_AvailableMove)
-                    {
-                        if(state->posToDefCheck.contains(move.pos))
-                        {
-                            availableMoveCnt++;
-                            break;
-                        }
-                    }          
-                    if(availableMoveCnt > 0)
-                        break;          
-                }
-                if(availableMoveCnt == 0)
-                {
-                    //TODO: Checkmate
-                }
-            }
         }
     }
 
@@ -302,19 +283,8 @@ namespace DawnBoard::Chess
     {          
         if(!IsInsideTheBoard(pos))
             return false;
-        
-        auto dst = state->square[pos.y][pos.x].piece;
-        // When the state before is true, 
-        // and if i will use this state(cond & ~~~), return true
-        bool emptyCond = dst == nullptr && (cond & MOVE_TO_EMPTY);
-        bool enemyCond = dst != nullptr && dst->m_Color != piece->m_Color && (cond & MOVE_TO_ENEMY);
 
-        // If both condition is false, return false
-        // Is not empty and is not enemy
-        if(!emptyCond && !enemyCond)
-            return false;
-        Movement::State moveState = Movement::State::NORMAL;
-
+        bool deleteKingsPos = false;
         if(kingsAvailablePos != nullptr)
         {
             // Other player index
@@ -338,8 +308,21 @@ namespace DawnBoard::Chess
             if(iter != kingsAvailablePos->end())
             {
                 kingsAvailablePos->erase(iter);
+                deleteKingsPos = true;
             }
         }
+        
+        auto dst = state->square[pos.y][pos.x].piece;
+        // When the state before is true, 
+        // and if i will use this state(cond & ~~~), return true
+        bool emptyCond = dst == nullptr && (cond & MOVE_TO_EMPTY);
+        bool enemyCond = dst != nullptr && dst->m_Color != piece->m_Color && (cond & MOVE_TO_ENEMY);
+
+        // If both condition is false, return false
+        // Is not empty and is not enemy
+        if(!emptyCond && !enemyCond)
+            return false;
+
         piece->m_AvailableMove.emplace_back(Pos{pos.x, pos.y}, Movement::State::NORMAL);
 
         return true;
@@ -349,12 +332,7 @@ namespace DawnBoard::Chess
     {
         ChessBoardState* state = GetState<ChessBoardState>();
 
-        // Remove previous available position
-        // And reset other states.
-        piece->m_AvailableMove.clear();
-
-        // If the current pos is a pos to prevent checking, do not add anything
-        if(state->posToDefCheck.contains(piece->m_Pos))
+        if(!piece->m_CanMove)
             return;
 
         // Checking movement type
@@ -378,38 +356,59 @@ namespace DawnBoard::Chess
             }
 
             // Make movement
-            // Start index of positions in the current direction
-            int dirStIdx = 0;
+            // other king's position
+            Pos kingPos = state->kings[!PieceColorToInt(piece->m_Color)]->m_Pos;
             for(int i = 0; i < move.size(); ++i)
             {
                 Pos curPos = piece->m_Pos;
-                dirStIdx = piece->m_AvailableMove.size();
+                bool canAdd = true;
+
+                // Start index of positions in the current direction
+                int dirStIdx = piece->m_AvailableMove.size();
+
+                Pos tmp = piece->m_Pos;
+                bool isOnly = true;
                 while(true)
                 {
                     curPos += move[i];
 
-                    bool isAdd = AddAvailablePosition(curPos, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY, dirStIdx,
-                                                      &kingsAvailablePos, state);
-
-                    
-                    if(!isAdd) 
+                    if(!IsInsideTheBoard(curPos))
                         break;
 
                     auto dst = state->square[curPos.y][curPos.x].piece;
-                    if(dst != nullptr)
+                    if(canAdd)
                     {
-                        // TODO: 이대로 쭉 갔을 때 Check가 걸릴 수 있으면 경로 상에 있는 상대 기물은 움직이면 안 됨.
-                        if(Pos::OnLine(piece->m_Pos, dst->m_Pos,
-                                       state->kings[PieceColorToInt(dst->m_Color)]->m_Pos))
-                        {
-                            // the current pos is a pos to prevent checking
-                            state->posToDefCheck.insert(piece->m_Pos);
-                            piece->m_AvailableMove.clear();
-                            // Do not add anything
-                            return;
-                        }
-                        break;
+                        canAdd = AddAvailablePosition(curPos, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY, dirStIdx,
+                                                      &kingsAvailablePos, state);
+                        if(dst != nullptr)
+                            canAdd = false;              
                     }
+
+                    // The condition of dst piece that makes the 'check' must be 
+                    // the only piece between the kings and the enemy.
+                    if(dst != nullptr && kingPos != curPos)
+                    {
+                        if(Pos::OnLine(piece->m_Pos, dst->m_Pos, kingPos))
+                        {
+                            if(tmp == piece->m_Pos)
+                            {
+                                tmp = curPos;
+                            }
+                            else
+                            {
+                                isOnly = false;
+                            }
+                        }
+                    }                    
+                }
+
+                if(tmp != piece->m_Pos && isOnly)
+                {
+                    auto dst = state->square[tmp.y][tmp.x].piece;
+                    // the current dst pos is a pos to prevent checking
+                    // so do not move
+                    dst->m_AvailableMove.clear();
+                    dst->m_CanMove = false;
                 }
             }
         }
@@ -423,7 +422,7 @@ namespace DawnBoard::Chess
                 };
                 Pos p{0, 0};
                 
-                uint8_t dir = piece->m_Color == PieceColor::BLACK? 1: -1;
+                uint8_t dir = piece->m_Color == PieceColor::BLACK? -1: 1;
                 for(int i = 0; i < 6; ++i)
                     move[i].y *= dir;
 
@@ -432,7 +431,7 @@ namespace DawnBoard::Chess
                 AddAvailablePosition(p, piece, MOVE_TO_EMPTY, -1, &kingsAvailablePos, state);
 
                 // normal 2 step move
-                if(!piece->m_Moved)
+                if(!piece->m_Moved && state->square[p.y][p.x].piece == nullptr)
                 {            
                     p = piece->m_Pos + move[1];    
                     AddAvailablePosition(p, piece, MOVE_TO_EMPTY, -1, &kingsAvailablePos, state);
@@ -492,6 +491,38 @@ namespace DawnBoard::Chess
         }
     }
 
+    bool ChessBoard::IsCheckmate()
+    {
+        ChessBoardState* state = GetState<ChessBoardState>();
+        int color = PieceColorToInt(state->currentColor);
+
+        if(state->isCheck[color])
+        {
+            int availableMoveCnt = state->kings[color]->m_AvailableMove.size();
+            if(availableMoveCnt == 0)
+            {                
+                for(auto& piece : state->pieces)
+                {
+                    if(piece->m_Color != state->currentColor)
+                        continue;
+                    for(auto& move :piece->m_AvailableMove)
+                    {
+                        if(state->posToDefCheck.contains(move.pos))
+                        {
+                            availableMoveCnt++;
+                            return false;
+                        }
+                    }               
+                }
+            }
+            else 
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 
     bool ChessBoard::IsInsideTheBoard(Pos pos)
     {
@@ -505,6 +536,14 @@ namespace DawnBoard::Chess
         ChessBoardState* state = GetState<ChessBoardState>();
 
         return state->pieces.size();
+    }
+
+    void ChessBoard::ChangeColor()
+    {
+        ChessBoardState* state = GetState<ChessBoardState>();
+
+        int color = (PieceColorToInt(state->currentColor) + 1) % 2;
+        state->currentColor = IntToPieceColor(color);
     }
 
 } // namespace DawnBoard::Chess

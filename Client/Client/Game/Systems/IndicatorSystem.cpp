@@ -19,7 +19,7 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
     for(auto &&[entity, transform, sprite, indicator] : view.each())
     {
         auto state = m_ChessBoard->GetState<ChessBoardState>();
-        if(indicator.testIdx >= 2)
+        if(indicator.testIdx >= 3)
         {
 
             continue;

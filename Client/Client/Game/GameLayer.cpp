@@ -64,7 +64,7 @@ void GameLayer::OnAttach()
 		}
 		Entity indicator = m_Scene->CreateEntity("indicator3");
 		auto& ic = indicator.AddComponent<IndicatorComponent>();
-		ic.testIdx = 2;
+		ic.testIdx = 3;
 
 		auto& transform = indicator.GetTransform();
 		transform.Scale = glm::vec3(0.4f);

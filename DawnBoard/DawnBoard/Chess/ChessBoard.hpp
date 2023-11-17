@@ -26,6 +26,8 @@ namespace DawnBoard::Chess
         int GetPieceCount();
 
     private:
+        void ChangeColor();
+
         // Movement
         void Move(ChessObjectRef& piece, Pos dst);
         
@@ -34,6 +36,7 @@ namespace DawnBoard::Chess
         bool AddAvailablePosition(Pos pos, ChessObjectRef& piece, MoveCondition cond, int stPosIdx,
                                   std::set<Pos>* kingsAvailablePos, ChessBoardState* state);
         void UpdateAvailablePosition(ChessObjectRef& piece, std::set<Pos>& kingsAvailablePos);
+        bool IsCheckmate();
 
 
         bool IsInsideTheBoard(Pos pos);
