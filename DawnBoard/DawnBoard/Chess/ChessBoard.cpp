@@ -151,7 +151,7 @@ namespace DawnBoard::Chess
             }
             if(!movable)
                 break;
-
+                
             Move(state->selectedObj, act.dst);
             // Reset board highlight
             for (auto& move : state->selectedObj->m_AvailableMove)
@@ -180,16 +180,25 @@ namespace DawnBoard::Chess
         ChessBoardState* state = GetState<ChessBoardState>();
 
         Pos src = piece->m_Pos;
-        int srcIdx = static_cast<int>(piece->m_Color);
-        piece->m_Moved = true;
+        Pos dstPiecePos = dst;
+        
+        // If en passant, real piece position is diffirent
+        if(dst == state->lastEnPassantPos)
+        {
+            dstPiecePos.y = src.y;
+        }
+        // Reset en passant
+        state->lastEnPassantPos = {-1, -1};
 
-        if(state->square[dst.y][dst.x].piece != nullptr)
+        int srcIdx = static_cast<int>(piece->m_Color);
+
+        if(state->square[dstPiecePos.y][dstPiecePos.x].piece != nullptr)
         {
             // captured piece
             // TODO: need optimization
             for(auto it = state->pieces.begin(); it != state->pieces.end(); it++)
             {
-                if((*it)->m_Pos == dst)
+                if((*it)->m_Pos == dstPiecePos)
                 {
                     (*it)->m_Captured = true;
                     state->pieces.erase(it);
@@ -208,12 +217,26 @@ namespace DawnBoard::Chess
         if(piece->m_PieceType == PieceType::KING)
         {
             // TODO: Add castling logics
+            // Move Rook
+            int dir = dst.x - piece->m_Pos.x < 0? -1: 1;            
+            auto rook = state->square[piece->m_Pos.y][dir==-1? 0 : 7].piece;
+
+            Move(rook, dst - Pos{dir, 0});
         }
 
         else if(piece->m_PieceType == PieceType::PAWN)
         {
             // TODO: Add Promotion
-        }       
+
+            // En passant
+            if(piece->m_Moved == false)
+            {
+                int dir = piece->m_Color == PieceColor::BLACK? -1: 1;
+                state->lastEnPassantPos.x = dst.x;
+                state->lastEnPassantPos.y = dst.y - dir;
+            }
+        }   
+        piece->m_Moved = true;    
 
     }
 
@@ -251,6 +274,15 @@ namespace DawnBoard::Chess
                     {
                         kingsAvailablePos[i].insert(curPos);
                     }
+                }
+            }
+            // Checking for castling
+            for(int x = -2; x <= 2; x += 4)
+            {
+                Pos curPos = state->kings[i]->m_Pos + Pos{x, 0};
+                if(IsInsideTheBoard(curPos))
+                {
+                    kingsAvailablePos[i].insert(curPos);
                 }
             }
         }
@@ -422,8 +454,8 @@ namespace DawnBoard::Chess
                 };
                 Pos p{0, 0};
                 
-                uint8_t dir = piece->m_Color == PieceColor::BLACK? -1: 1;
-                for(int i = 0; i < 6; ++i)
+                int dir = piece->m_Color == PieceColor::BLACK? -1: 1;
+                for(int i = 0; i < 4; ++i)
                     move[i].y *= dir;
 
                 // normal 1 step move
@@ -447,7 +479,7 @@ namespace DawnBoard::Chess
                     if(state->lastEnPassantPos == p)
                         moveState |= MOVE_TO_EMPTY;
 
-                    AddAvailablePosition(p, piece, MOVE_TO_ENEMY, -1,
+                    AddAvailablePosition(p, piece, moveState, -1,
                                          &kingsAvailablePos, state);
                 }
             }
@@ -476,14 +508,49 @@ namespace DawnBoard::Chess
 
                 for(auto p : kingsAvailablePos)
                 {   
-                    AddAvailablePosition(p, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY, -1,
-                                         nullptr, state);
-                }
-
-                if(!piece->m_Moved && !state->isCheck[static_cast<int>(piece->m_Color)])
-                {
                     // TODO: Add castling
+                    if(abs(p.x - piece->m_Pos.x) == 2)
+                    {
+                        if(!piece->m_Moved && !state->isCheck[static_cast<int>(piece->m_Color)])
+                        {
+                            Pos tmp;
+                            int dir = p.x - piece->m_Pos.x < 0? -1: 1;
 
+                            // The king does not pass through or finish on a square 
+                            // that is attacked by an enemy piece.
+                            tmp = p - Pos{dir, 0};
+                            if (!kingsAvailablePos.contains(tmp))
+                            {
+                                continue;
+                            }
+
+                            // Exist Rook
+                            auto& rook = state->square[piece->m_Pos.y][dir==-1? 0 : 7].piece;
+                            // if moved, this is not rook
+                            if(rook == nullptr || rook->m_Moved)
+                                continue;
+                            
+                            bool able = true;
+                            tmp = piece->m_Pos;
+                            tmp.x += dir;
+                            while(able && IsInsideTheBoard(tmp) && 0 < tmp.x && tmp.x < 7)
+                            {
+                                able = state->square[tmp.y][tmp.x].piece == nullptr;
+                                tmp.x += dir;                                
+                            }
+
+                            if(able)
+                            {
+                                AddAvailablePosition(p, piece, MOVE_TO_EMPTY, -1, nullptr, state);
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                        AddAvailablePosition(p, piece, MOVE_TO_EMPTY | MOVE_TO_ENEMY, -1,
+                                             nullptr, state);
+                    }
                 }
             }
             #pragma endregion

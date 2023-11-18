@@ -10,8 +10,8 @@ namespace DawnBoard::Chess
 
     struct Pos
     {
-        int8_t x, y;
-        Pos(int8_t _x, int8_t _y): x(_x), y(_y) {}
+        int x, y;
+        Pos(): x(0), y(0) {}
         Pos(int _x, int _y): x(_x), y(_y) {}
         Pos(float _x, float _y): x(_x), y(_y) {}
 
