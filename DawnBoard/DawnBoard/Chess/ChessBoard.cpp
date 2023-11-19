@@ -83,7 +83,6 @@ namespace DawnBoard::Chess
         case ActionType::SELECT:
         {
             auto& act = reinterpret_cast<SelectAction&>(action); 
-            state->needRender = true;
 
             if(state->selectedObj != nullptr)
             {
@@ -167,8 +166,6 @@ namespace DawnBoard::Chess
             {
                 std::cout << "Checkmate!, " << static_cast<int>(state->currentColor) << " lose\n";
             }
-
-            state->needRender = true;
             return true;
         }
         }
@@ -183,7 +180,8 @@ namespace DawnBoard::Chess
         Pos dstPiecePos = dst;
         
         // If en passant, real piece position is diffirent
-        if(dst == state->lastEnPassantPos)
+        if(piece->m_PieceType == PieceType::PAWN && 
+           dst == state->lastEnPassantPos)
         {
             dstPiecePos.y = src.y;
         }

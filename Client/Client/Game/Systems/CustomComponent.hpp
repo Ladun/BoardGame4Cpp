@@ -9,7 +9,12 @@ using namespace DawnBoard::Chess;
 #pragma region Chess graphical component
 struct ChessPieceComponent
 {
-    ChessObjectRef piece;    
+    ChessObjectRef piece;
+    // For animation
+    Pos currentPos;
+    bool doAnimation = false;
+    float time = 0.0f;
+    float animTime = 0.3f;
 };
 
 struct ChessBoardComponent

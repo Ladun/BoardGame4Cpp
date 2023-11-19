@@ -41,6 +41,11 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
 
             pos.x = static_cast<int>(pos.x + 0.5f);
             pos.y = static_cast<int>(pos.y + 0.5f);
+
+            if(pos.x < 0 || pos.x > 7 || pos.y < 0 || pos.y > 7)
+                continue;
+
+            DS_APP_DEBUG("{0}, {1} pos", pos.x, pos.y);
             
             if(Input::IsMouseButtonDown(Mouse::ButtonLeft))
             {

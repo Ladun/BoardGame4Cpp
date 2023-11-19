@@ -43,39 +43,9 @@ void GameLayer::OnAttach()
 
 		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
 		sprite.Color = {0.3f, 0.8f, 0.3f, 0.5f};
-		sprite.SortingOrder = 1;
+		sprite.SortingOrder = 10;
 
 	}
-
-	{ // Test Indicator
-		for(int i = 0; i< 2; ++i)
-		{
-			Entity indicator = m_Scene->CreateEntity("indicator2");
-			auto& ic = indicator.AddComponent<IndicatorComponent>();
-			ic.testIdx = i + 1;
-
-			auto& transform = indicator.GetTransform();
-			transform.Scale = glm::vec3(0.4f);
-			transform.Translation = {10, 10 + i , 2.0f};
-
-			auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
-			sprite.Color = {glm::vec3(i), 0.0f};
-			sprite.SortingOrder = 1;
-		}
-		Entity indicator = m_Scene->CreateEntity("indicator3");
-		auto& ic = indicator.AddComponent<IndicatorComponent>();
-		ic.testIdx = 3;
-
-		auto& transform = indicator.GetTransform();
-		transform.Scale = glm::vec3(0.4f);
-		transform.Translation = {10, 10 + 2 , 2.0f};
-
-		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
-		sprite.Color = {1.0f, 0.7f, 0.3f, 0.0f};
-		sprite.SortingOrder = 1;
-
-	}
-
 
 	{ // Draw simple map
 		Entity parent = m_Scene->CreateEntity("board_parent");
@@ -140,8 +110,9 @@ void GameLayer::OnAttach()
 			);
 			sprite.SortingOrder = 0;
 
-			auto& cg 	= obj.AddComponent<ChessPieceComponent>();
-			cg.piece 	= piece;
+			auto& cg 		= obj.AddComponent<ChessPieceComponent>();
+			cg.piece 		= piece;
+			cg.currentPos 	= piece->m_Pos;
 
 		} 
 	}
@@ -151,7 +122,7 @@ void GameLayer::OnAttach()
 		auto& transform = cameraObj.GetComponent<TransformComponent>();
 		transform.Translation = {4.0f, 4.0f, 12.0f};
 		auto& cam = cameraObj.AddComponent<CameraComponent>();
-		cam.Cam.SetOrthographic(20, -100.0f, 100.0f);
+		cam.Cam.SetOrthographic(40, -100.0f, 100.0f);
 	}
 
 	m_Scene->SortForSprites();	

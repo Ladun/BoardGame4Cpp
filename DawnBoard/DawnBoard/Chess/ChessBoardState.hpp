@@ -30,8 +30,6 @@ namespace DawnBoard::Chess
         Pos lastEnPassantPos    = {-1, -1};
         // Check state
         bool isCheck[2]         = {false, false};
-        // Rendering value
-        bool needRender         = true;
 
         // Current color player's state
         PieceColor currentColor = PieceColor::WHITE;

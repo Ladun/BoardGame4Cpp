@@ -13,26 +13,53 @@ ChessGraphicSystem::ChessGraphicSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> s
 
 void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
-    if(!m_ChessBoard->GetState<ChessBoardState>()->needRender)
-        return;
-
     // Piece update
-    const auto view1 = registry.view<TransformComponent, ChessPieceComponent>();
+    const auto view1 = registry.view<TransformComponent, SpriteRendererComponent, ChessPieceComponent>();
+    bool updateSpriteOrder = false;
     for(auto it = view1.begin(); it != view1.end();)
     {
-        auto &&[transform, pieceInfo] = view1.get(*it);
+        auto &&[transform, sprite, pieceInfo] = view1.get(*it);
         if(pieceInfo.piece->m_Captured)
         {
             m_Scene->DestroyEntity({*it, m_Scene.get()});
         }
         else
         {
-            transform.Translation = {pieceInfo.piece->m_Pos.x, 
-                                     pieceInfo.piece->m_Pos.y, 
-                                     transform.Translation.z};
+
+            if(pieceInfo.currentPos != pieceInfo.piece->m_Pos &&
+               !pieceInfo.doAnimation && pieceInfo.time < 0.1f)
+            {
+                pieceInfo.doAnimation = true;
+                sprite.SortingOrder = 1;
+
+                updateSpriteOrder = true;
+            }
+
+            float dstX = pieceInfo.currentPos.x;
+            float dstY = pieceInfo.currentPos.y;
+
+            if(pieceInfo.doAnimation)
+            {
+                dstX += (pieceInfo.piece->m_Pos.x - pieceInfo.currentPos.x) * pieceInfo.time;
+                dstY += (pieceInfo.piece->m_Pos.y - pieceInfo.currentPos.y) * pieceInfo.time;
+                pieceInfo.time += ts / pieceInfo.animTime;
+                if(pieceInfo.time > 1.0f)
+                {
+                    pieceInfo.time = 0.0f;
+                    pieceInfo.doAnimation = false;
+                    pieceInfo.currentPos = pieceInfo.piece->m_Pos;
+                    sprite.SortingOrder = 0;
+
+                    updateSpriteOrder = true;
+                }
+            }            
+
+            transform.Translation = {dstX, dstY, pieceInfo.doAnimation};
             it++;                                     
         }
     }
+    if(updateSpriteOrder)
+        m_Scene->SortForSprites();
 
     // for(auto &&[entity, transform, pieceInfo] : view1.each())
     // {
@@ -41,7 +68,6 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
     //                              transform.Translation.z};
     // }
     
-    DS_APP_DEBUG("Board graphic Update");
     // Board update
     const auto view2 = registry.view<SpriteRendererComponent, ChessBoardComponent>();
     for(auto &&[entity, sprite, chessBoardCom] : view2.each())
@@ -71,6 +97,4 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
             }
         }
     }
-
-    m_ChessBoard->GetState<ChessBoardState>()->needRender = false;
 }
