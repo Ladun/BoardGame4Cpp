@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
  
 set(PROJECT_NAME BoardGameClient)
 
@@ -15,6 +15,7 @@ file(GLOB_RECURSE SOURCES
 
 # add subprojects
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../third-party/DawnStar/DawnStar third-party/DawnStar)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../third-party/DawnNet/DawnNet third-party/DawnNet)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../DawnBoard DawnBoard)
 
 # make exe file
@@ -23,7 +24,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SOURCE_DIR})
 
 # Linking
-target_link_libraries(${PROJECT_NAME} DawnStar DawnBoard)
+target_link_libraries(${PROJECT_NAME} DawnStar DawnBoard DawnNet)
 
 # compile option for c17
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
