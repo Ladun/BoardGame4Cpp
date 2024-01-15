@@ -1,0 +1,80 @@
+2024/01/14
+4.0K    ./boot
+23M     ./root
+6.5G    ./usr
+4.0K    ./srv
+4.0K    ./media
+552M    ./opt
+0       ./proc
+3.7M    ./etc
+0       ./sys
+244K    ./tmp
+81M     ./var
+8.0K    ./dev
+4.0K    ./mnt
+140K    ./run
+6.8G    ./home
+5.3G    ./vscode
+5.5G    ./.codespaces
+12G     ./workspaces
+126M    ./go
+51M     ./.docker
+36G     .
+
+@Ladun ➜ /home $ sudo du -d 1 -h
+8.0K    ./vscode
+6.8G    ./codespace
+6.8G    .
+
+@Ladun ➜ /.codespaces $ sudo du -d 1 -h
+5.5G    ./bin
+5.5G    .
+
+@Ladun ➜ /vscode $ sudo du -d 1 -h
+1.1G    ./serverCache
+1.1G    ./extensionsCache
+3.2G    ./bin
+5.3G    .
+
+@Ladun ➜ / $ df
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay         32847680 15755040  15398544  51% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        8     65528   1% /dev/shm
+/dev/root       30298176 23053160   7228632  77% /usr/sbin/docker-init
+/dev/loop3      32847680 15755040  15398544  51% /workspaces
+/dev/sdb1       46127956     1080  43751300   1% /tmp
+
+@Ladun ➜ / $ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          32G   16G   15G  51% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M  8.0K   64M   1% /dev/shm
+/dev/root        29G   22G  6.9G  77% /usr/sbin/docker-init
+/dev/loop3       32G   16G   15G  51% /workspaces
+/dev/sdb1        44G  720K   42G   1% /tmp
+
+
+2024/01/15
+@Ladun ➜ / $ sudo du -d 1 -h
+4.0K    ./boot
+23M     ./root
+7.3G    ./usr
+4.0K    ./srv
+4.0K    ./media
+552M    ./opt
+0       ./proc
+3.7M    ./etc
+0       ./sys
+824K    ./tmp
+81M     ./var
+0       ./dev
+4.0K    ./mnt
+140K    ./run
+9.6G    ./home
+5.2G    ./vscode
+5.4G    ./.codespaces
+12G     ./workspaces
+126M    ./go
+51M     ./.docker
+40G     .

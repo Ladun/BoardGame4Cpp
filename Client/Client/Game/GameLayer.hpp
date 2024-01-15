@@ -6,8 +6,9 @@
 
 #include <DawnBoard/Chess/ChessBoard.hpp>
 
+#include "Scene/SceneWrapper.hpp"
+
 using namespace DawnStar;
-using namespace DawnBoard::Chess;
 
 class GameLayer : public Layer
 {
@@ -18,21 +19,17 @@ public:
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
 
-	void OnUpdate(Timestep ts) override;
+	virtual void OnUpdate(Timestep ts) override;
 	virtual void OnImGuiRender() override;
-	void OnEvent(Event& e) override;
-
-	std::string GetTextureNameByPieceType(PieceType type, PieceColor color);
+	virtual void OnEvent(Event& e) override;
 
 private:
 	bool OnWindowResize(WindowResizeEvent& e);
 	bool OnMouseMoved(MouseMovedEvent& e);
 
+	Ref<SceneWrapper> GetSceneByName(std::string name);
+
 private:
-	RenderStatPanel m_StatPanel;
-	ObjectListPanel m_ObjListPanel;
-
-	Ref<ChessBoard> m_ChessBoard;
-
-	Ref<Scene> m_Scene;
+	std::map<std::string, Ref<SceneWrapper>> _scenes; 
+	Ref<SceneWrapper> _currentScene;
 };

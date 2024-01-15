@@ -1,16 +1,22 @@
 #pragma once
 
-#include <DawnNet/Network/Service.hpp>
+#include "ServerPacketHandler.hpp"
+
 class NetworkManager : public DawnNet::Singleton<NetworkManager>
 {
 public:
     NetworkManager();
     ~NetworkManager();
 
-    static void Init();
+    void Init();
+    bool Connect(std::string host, std::string port);
 	template<typename Packet> 
-    static void Send(Packet packet);
+    void Send(Packet packet)
+    {
+        auto sendBuffer = DawnNet::ServerPacketHandler::MakeSendBuffer(packet);
+        service->Broadcast(sendBuffer);
+    }
 
 private:
-    std::shared_ptr<DawnNet::ClientService> service;
+    DawnNet::ClientServiceRef service;
 };

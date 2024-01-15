@@ -1,6 +1,6 @@
-[submodule "third-party/DawnStar"]
-	path = third-party/DawnStar
-	url = https://Ladun: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@github.com/Ladun/DawnStar
 [submodule "third-party/DawnNet"]
 	path = third-party/DawnNet
-	url = https://Ladun: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@github.com/Ladun/SimpleNetEngine
+	url = https://github.com/Ladun/DawnNet.git
+[submodule "third-party/DawnStar"]
+	path = third-party/DawnStar
+	url = https://github.com/Ladun/DawnStar.git
