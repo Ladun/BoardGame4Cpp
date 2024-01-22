@@ -7,7 +7,10 @@ using namespace DawnStar;
 class SceneWrapper
 {
 public:
-    SceneWrapper() = default;
+    SceneWrapper() 
+    {
+        _scene = CreateRef<Scene>();
+    }
     virtual ~SceneWrapper() = default;
 
     virtual void OnAttach() = 0;
@@ -16,7 +19,7 @@ public:
 	virtual void OnUpdate(Timestep ts) = 0;
 	virtual void OnImGuiRender() = 0;
 
-    Ref<Scene> GetScene() { return _scene; }
+    Ref<Scene>& GetScene() { return _scene; }
 
 protected:
     Ref<Scene> _scene;

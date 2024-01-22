@@ -6,8 +6,8 @@
 
 #include <DawnBoard/Chess/ChessBoardState.hpp>
 
-ChessGraphicSystem::ChessGraphicSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> scene)
-    : m_ChessBoard(chessBoard), m_Scene(scene)
+ChessGraphicSystem::ChessGraphicSystem(Ref<Scene>& scene, Ref<ChessBoard>& chessBoard)
+    : SystemBase(scene), _chessBoard(chessBoard)
 {
 }
 
@@ -21,7 +21,7 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
         auto &&[transform, sprite, pieceInfo] = view1.get(*it);
         if(pieceInfo.piece->m_Captured)
         {
-            m_Scene->DestroyEntity({*it, m_Scene.get()});
+            _scene->DestroyEntity({*it, _scene.get()});
         }
         else
         {
@@ -59,7 +59,7 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
         }
     }
     if(updateSpriteOrder)
-        m_Scene->SortForSprites();
+        _scene->SortForSprites();
 
     // for(auto &&[entity, transform, pieceInfo] : view1.each())
     // {
@@ -72,7 +72,7 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
     const auto view2 = registry.view<SpriteRendererComponent, ChessBoardComponent>();
     for(auto &&[entity, sprite, chessBoardCom] : view2.each())
     {
-        ChessBoardState* state = m_ChessBoard->GetState<ChessBoardState>();
+        ChessBoardState* state = _chessBoard->GetState<ChessBoardState>();
         BoardInfo info = state->square[chessBoardCom.y][chessBoardCom.x];
 
         if(chessBoardCom.back)

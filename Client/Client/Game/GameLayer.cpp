@@ -1,16 +1,18 @@
 #include <DawnStar/dspch.hpp>
 #include "GameLayer.hpp"
 #include "Scene/GameScene.hpp"
+#include "Scene/RobbyScene.hpp"
 
 GameLayer::GameLayer()
 {
 }
 void GameLayer::OnAttach()
 {
-	_scenes.insert({"Game", CreateRef<GameScene>()});
+	_scenes.insert({"Game", CreateRef<GameScene>(this)});
+	_scenes.insert({"Robby", CreateRef<RobbyScene>(this)});
 
-	_currentScene = GetSceneByName("Game");
-	
+	ChangeScene("Robby");
+
     for(const auto& item : _scenes)
 	{
 		item.second->OnAttach();
@@ -36,6 +38,13 @@ void GameLayer::OnUpdate(Timestep ts)
 
 void GameLayer::OnImGuiRender()
 {
+
+	
+#if DS_DEBUG
+	_statPanel.OnImGuiRender();
+	_objListPanel.OnImGuiRender();
+#endif
+
 	_currentScene->OnImGuiRender();
 }
 
@@ -44,6 +53,15 @@ void GameLayer::OnEvent(Event& e)
 	EventDispatcher dispatcher(e);
 	dispatcher.Dispatch<WindowResizeEvent>(DS_BIND_EVENT_FN(GameLayer::OnWindowResize));
 	dispatcher.Dispatch<MouseMovedEvent>(DS_BIND_EVENT_FN(GameLayer::OnMouseMoved));
+}
+
+void GameLayer::ChangeScene(std::string name)
+{
+	_currentScene = GetSceneByName(name);
+	
+#if DS_DEBUG
+	_objListPanel.SetContext(_currentScene->GetScene());
+#endif
 }
 
 bool GameLayer::OnWindowResize(WindowResizeEvent &e)

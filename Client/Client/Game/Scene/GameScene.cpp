@@ -1,6 +1,7 @@
 #include <DawnStar/dspch.hpp>
 #include "GameScene.hpp"
 
+#include "../GameLayer.hpp"
 #include "../../Utils/ResourceManager.hpp"
 #include "../../Utils/Utils.hpp"
 #include "../Systems/CustomComponent.hpp"
@@ -11,21 +12,16 @@
 
 #include <imgui.h>
 
-GameScene::GameScene()
+GameScene::GameScene(GameLayer* layer) : SceneWrapper(), _layer(layer)
 {
 	_chessBoard = CreateRef<ChessBoard>();
-    _scene = CreateRef<Scene>();
 }
 
 void GameScene::OnAttach()
 {
     _scene->OnViewportResize(Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight());
-	_scene->AddSystem(CreateRef<IndicatorSystem>(_chessBoard, _scene));
-	_scene->AddSystem(CreateRef<ChessGraphicSystem>(_chessBoard, _scene));
-
-#if DS_DEBUG
-    _objListPanel.SetContext(_scene);
-#endif
+	_scene->AddSystem(CreateRef<IndicatorSystem>(_scene, _chessBoard));
+	_scene->AddSystem(CreateRef<ChessGraphicSystem>(_scene, _chessBoard));
 
 	// Load resource
 	ResourceManager::instance().LoadTexturesFromAssets();
@@ -139,8 +135,7 @@ void GameScene::OnUpdate(Timestep ts)
 
 void GameScene::OnImGuiRender()
 {
-	_statPanel.OnImGuiRender();
-	_objListPanel.OnImGuiRender();
+
 }
 
 std::string GameScene::GetTextureNameByPieceType(PieceType type, PieceColor color)

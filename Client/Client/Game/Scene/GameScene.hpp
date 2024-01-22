@@ -1,7 +1,5 @@
 #pragma once
 
-#include <DawnStar/Debug/RenderStatPanel.hpp>
-#include <DawnStar/Debug/ObjectListPanel.hpp>
 
 #include <DawnBoard/Chess/ChessBoard.hpp>
 
@@ -9,10 +7,12 @@
 
 using namespace DawnBoard::Chess;
 
+class GameLayer;
+
 class GameScene : public SceneWrapper
 {
 public:
-    GameScene();
+    GameScene(GameLayer* layer);
     virtual ~GameScene() = default;
 
     virtual void OnAttach() override;
@@ -24,8 +24,6 @@ public:
 	std::string GetTextureNameByPieceType(PieceType type, PieceColor color);
 
 private:
-	RenderStatPanel _statPanel;
-	ObjectListPanel _objListPanel;
-    
+    GameLayer* _layer;
 	Ref<ChessBoard> _chessBoard;
 };

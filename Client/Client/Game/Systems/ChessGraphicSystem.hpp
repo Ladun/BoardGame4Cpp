@@ -15,13 +15,12 @@ const glm::vec4 BOARD_DARK_SELECTED_COLOR = glm::vec4(.83f, .83f, .35f, 1.f);
 class ChessGraphicSystem : public SystemBase
 {
 public:
-    ChessGraphicSystem(Ref<ChessBoard>& chessBoard, Ref<Scene> scene);
+    ChessGraphicSystem(Ref<Scene>& scene, Ref<ChessBoard>& chessBoard);
 
 protected:
     virtual void OnUpdate(Timestep ts, entt::registry& registry) override;
 
 private:
-    Ref<ChessBoard> m_ChessBoard;
-    Ref<Scene> m_Scene;
+    Ref<ChessBoard> _chessBoard;
 
 };

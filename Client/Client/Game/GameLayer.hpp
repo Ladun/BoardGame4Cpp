@@ -23,6 +23,8 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Event& e) override;
 
+	void ChangeScene(std::string name);
+
 private:
 	bool OnWindowResize(WindowResizeEvent& e);
 	bool OnMouseMoved(MouseMovedEvent& e);
@@ -30,6 +32,9 @@ private:
 	Ref<SceneWrapper> GetSceneByName(std::string name);
 
 private:
+	RenderStatPanel _statPanel;
+	ObjectListPanel _objListPanel;
+	
 	std::map<std::string, Ref<SceneWrapper>> _scenes; 
 	Ref<SceneWrapper> _currentScene;
 };

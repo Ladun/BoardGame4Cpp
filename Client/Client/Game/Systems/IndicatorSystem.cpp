@@ -6,19 +6,19 @@
 
 #include <DawnBoard/Chess/ChessAction.hpp>
 
-IndicatorSystem::IndicatorSystem(Ref<ChessBoard> &chessBoard, Ref<Scene> scene)
-    : m_ChessBoard(chessBoard), m_Scene(scene), m_CurrentPlayer(PieceColor::WHITE)
+IndicatorSystem::IndicatorSystem(Ref<Scene>& scene, Ref<ChessBoard>& chessBoard)
+    : SystemBase(scene), _chessBoard(chessBoard), _currentPlayer(PieceColor::WHITE)
 {
 }
 
 void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
     const auto view = registry.view<TransformComponent, SpriteRendererComponent, IndicatorComponent>();
-    const auto& state = m_ChessBoard->GetState<ChessBoardState>();
+    const auto& state = _chessBoard->GetState<ChessBoardState>();
 
     for(auto &&[entity, transform, sprite, indicator] : view.each())
     {
-        auto state = m_ChessBoard->GetState<ChessBoardState>();
+        auto state = _chessBoard->GetState<ChessBoardState>();
         if(indicator.testIdx >= 3)
         {
 
@@ -35,9 +35,9 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
         
         if(Input::IsMouseButtonDown(Mouse::Any))
         {
-            auto pos = Utils::ToScreenCoord(Input::GetMousePosition());
+            auto pos = ToScreenCoord(Input::GetMousePosition());
 
-            pos = Utils::ToScreenToWorldCoord(pos, m_Scene->GetPrimaryCameraEntity());
+            pos = ScreenToWorldCoord(pos, _scene->GetPrimaryCameraEntity());
 
             pos.x = static_cast<int>(pos.x + 0.5f);
             pos.y = static_cast<int>(pos.y + 0.5f);
@@ -50,19 +50,19 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
                 transform.Translation.x = pos.x;
                 transform.Translation.y = pos.y;
 
-                auto act = SelectAction({pos.x, pos.y}, m_CurrentPlayer);
-                m_ChessBoard->ApplyAction(act);
+                auto act = SelectAction({pos.x, pos.y}, _currentPlayer);
+                _chessBoard->ApplyAction(act);
             }
             else if(Input::IsMouseButtonDown(Mouse::ButtonRight))
             {
                 if(state->selectedObj != nullptr)
                 {
-                    auto act = MoveAction({pos.x, pos.y}, m_CurrentPlayer);
+                    auto act = MoveAction({pos.x, pos.y}, _currentPlayer);
                     // TODO: maybe delete, current just for single
-                    if(m_ChessBoard->ApplyAction(act))
+                    if(_chessBoard->ApplyAction(act))
                     {
-                        int color = (PieceColorToInt(m_CurrentPlayer) + 1) % 2;
-                        m_CurrentPlayer = IntToPieceColor(color);
+                        int color = (PieceColorToInt(_currentPlayer) + 1) % 2;
+                        _currentPlayer = IntToPieceColor(color);
                     }
                 }
             }
