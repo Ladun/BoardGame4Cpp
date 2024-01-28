@@ -1,0 +1,37 @@
+syntax = "proto3";
+package Protocol;
+
+message C_LOGIN
+{
+	
+}
+
+message S_LOGIN
+{
+	bool success = 1;
+	repeated uint64 players = 2;
+}
+
+message C_JOIN
+{
+	
+}
+
+message S_JOIN
+{
+	bool success = 1;
+	repeated uint64 players = 2;
+}
+
+message C_CHAT
+{
+	string nickname = 1;
+	string msg = 2;
+}
+
+message S_CHAT
+{
+	uint64 playerId = 1;
+	string nickname = 2;
+	string msg = 3;
+}

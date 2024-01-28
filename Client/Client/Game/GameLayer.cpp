@@ -2,12 +2,15 @@
 #include "GameLayer.hpp"
 #include "Scene/GameScene.hpp"
 #include "Scene/RobbyScene.hpp"
+#include "Network/NetworkManager.hpp"
 
 GameLayer::GameLayer()
 {
 }
 void GameLayer::OnAttach()
 {
+
+	// Setting scenes
 	_scenes.insert({"Game", CreateRef<GameScene>(this)});
 	_scenes.insert({"Robby", CreateRef<RobbyScene>(this)});
 
@@ -17,6 +20,9 @@ void GameLayer::OnAttach()
 	{
 		item.second->OnAttach();
 	}
+
+	// Network initialization
+	NetworkManager::Instance().Init();
 }
 
 void GameLayer::OnDetach()

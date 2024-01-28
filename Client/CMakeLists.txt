@@ -9,11 +9,6 @@ project(${PROJECT_NAME}
         VERSION 1.0
         LANGUAGES CXX)
 
-# find source
-file(GLOB_RECURSE SOURCES
-     ${SOURCE_DIR}/*.cpp
-     ${SOURCE_DIR}/*.cc)
-
 # Find protobuf lib
 set(Protobuf_DEBUG ON)
 set(Protobuf_USE_STATIC_LIBS ON)
@@ -23,6 +18,11 @@ find_package(Protobuf REQUIRED)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../third-party/DawnStar/DawnStar third-party/DawnStar)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../third-party/DawnNet/DawnNet third-party/DawnNet)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../DawnBoard third-party/DawnBoard)
+
+# find source
+file(GLOB_RECURSE SOURCES
+     ${SOURCE_DIR}/*.cpp
+     ${SOURCE_DIR}/*.cc)
 
 # make exe file
 add_compile_definitions(DS_DEBUG)
