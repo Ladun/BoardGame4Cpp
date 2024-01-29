@@ -23,6 +23,10 @@ public:
     
 	std::string GetTextureNameByPieceType(PieceType type, PieceColor color);
 
+// Content Method
+public:
+    void ResetBoard();
+
 private:
     GameLayer* _layer;
 	Ref<ChessBoard> _chessBoard;

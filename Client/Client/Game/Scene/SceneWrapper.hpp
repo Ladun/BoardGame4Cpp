@@ -7,7 +7,8 @@ using namespace DawnStar;
 class SceneWrapper
 {
 public:
-    SceneWrapper() 
+    SceneWrapper(std::string name) 
+        : _name(name)
     {
         _scene = CreateRef<Scene>();
     }
@@ -20,8 +21,10 @@ public:
 	virtual void OnImGuiRender() = 0;
 
     Ref<Scene>& GetScene() { return _scene; }
+    std::string GetName() { return _name; }
 
 protected:
+    std::string _name;
     Ref<Scene> _scene;
 
 };

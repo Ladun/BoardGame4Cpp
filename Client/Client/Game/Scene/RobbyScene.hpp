@@ -16,6 +16,10 @@ public:
 	virtual void OnUpdate(Timestep ts) override;
 	virtual void OnImGuiRender() override;
 
+// Content method
+public:
+    void ControlLoadingScreen(bool run);
+
 private:
     GameLayer* _layer;
 };

@@ -1,4 +1,4 @@
-#include <DawnStar/dspch.hpp>
+#include <pch.hpp>
 #include "TestSystem.hpp"
 
 #include "CustomComponent.hpp"

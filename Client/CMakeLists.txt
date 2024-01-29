@@ -28,7 +28,9 @@ file(GLOB_RECURSE SOURCES
 add_compile_definitions(DS_DEBUG)
 add_compile_definitions(DN_DEBUG)
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PUBLIC ${SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC 
+                           ${SOURCE_DIR}
+                           ${Protobuf_INCLUDE_DIRS})
 
 # Linking
 target_link_libraries(${PROJECT_NAME} DawnStar DawnBoard DawnNet ${Protobuf_LIBRARIES})

@@ -1,9 +1,7 @@
-#include <DawnNet/pch.hpp>
-#include <DawnNet/Network/Service.hpp>
-
+#include <pch.hpp>
 #include "NetworkManager.hpp"
 #include "GameSession.hpp"
-
+#include "ServerPacketHandler.hpp"
 
 NetworkManager::NetworkManager()
     : service(nullptr)
@@ -16,8 +14,9 @@ NetworkManager::~NetworkManager()
     
 }
 
-void NetworkManager::Init()
+void NetworkManager::Init(GameLayer* layer)
 {
+    gameLayer = layer;
     ServerPacketHandler::Init();
 }
 

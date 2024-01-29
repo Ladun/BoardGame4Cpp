@@ -25,6 +25,9 @@ public:
 
 	void ChangeScene(std::string name);
 
+public:
+	Ref<SceneWrapper> GetCurrentScene() { return _currentScene; }
+
 private:
 	bool OnWindowResize(WindowResizeEvent& e);
 	bool OnMouseMoved(MouseMovedEvent& e);

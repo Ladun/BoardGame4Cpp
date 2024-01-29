@@ -1,4 +1,4 @@
-#include <DawnStar/dspch.hpp>
+#include <pch.hpp>
 #include "GameLayer.hpp"
 #include "Scene/GameScene.hpp"
 #include "Scene/RobbyScene.hpp"
@@ -22,7 +22,7 @@ void GameLayer::OnAttach()
 	}
 
 	// Network initialization
-	NetworkManager::Instance().Init();
+	NetworkManager::Instance().Init(this);
 }
 
 void GameLayer::OnDetach()

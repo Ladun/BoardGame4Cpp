@@ -1,4 +1,4 @@
-#include <DawnStar/dspch.hpp>
+#include <pch.hpp>
 #include "GameScene.hpp"
 
 #include "../GameLayer.hpp"
@@ -12,7 +12,7 @@
 
 #include <imgui.h>
 
-GameScene::GameScene(GameLayer* layer) : SceneWrapper(), _layer(layer)
+GameScene::GameScene(GameLayer* layer) : SceneWrapper("Game"), _layer(layer)
 {
 	_chessBoard = CreateRef<ChessBoard>();
 }
@@ -160,4 +160,8 @@ std::string GameScene::GetTextureNameByPieceType(PieceType type, PieceColor colo
 	}
 
 	return colorStr + typeStr + ".png";
+}
+
+void GameScene::ResetBoard()
+{
 }

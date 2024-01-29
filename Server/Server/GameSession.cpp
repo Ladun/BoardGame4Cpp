@@ -19,11 +19,11 @@ void GameSession::OnConnected()
     // Create player data
     static Atomic<uint64> playerId = 1;
 
-    Ref<Player> player = MakeShared<Player>();
-    player->playerId = playerId;
+    _player = MakeShared<Player>();
+    _player->playerId = playerId;
     playerId.fetch_add(1);
-    player->name = "Test";
-    player->ownerSession = gameSession;
+    _player->name = "Test";
+    _player->ownerSession = gameSession;
 }
 
 void GameSession::OnDisconnected()
