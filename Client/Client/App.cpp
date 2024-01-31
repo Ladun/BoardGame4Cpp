@@ -1,6 +1,9 @@
+#include <pch.hpp>
 #include <DawnStar/DawnStar.hpp>
 #define DS_PLATFORM_WINDOWS
 #include <DawnStar/Core/EntryPoint.hpp>
+
+#include <DawnNet/Concurrency/ThreadManager.hpp>
 
 #include "Game/GameLayer.hpp"
 
@@ -14,7 +17,7 @@ public:
     }
     ~GameApp()
     {
-        
+        DawnNet::GThreadManager->Join();   
     }
 };
 

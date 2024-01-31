@@ -121,7 +121,11 @@ void GameScene::OnAttach()
 		cam.Cam.SetOrthographic(40, -100.0f, 100.0f);
 	}
 
-	_scene->SortForSprites();
+	_scene->SortComponents<SpriteRendererComponent>(
+		[](const auto& lhs, const auto& rhs)
+		{
+			return lhs.SortingOrder < rhs.SortingOrder;
+		});
 }
 
 void GameScene::OnDetach()

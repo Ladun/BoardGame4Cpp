@@ -59,7 +59,13 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
         }
     }
     if(updateSpriteOrder)
-        _scene->SortForSprites();
+    {
+	    _scene->SortComponents<SpriteRendererComponent>(
+            [](const auto& lhs, const auto& rhs)
+            {
+                return lhs.SortingOrder < rhs.SortingOrder;
+            });
+    }
 
     // for(auto &&[entity, transform, pieceInfo] : view1.each())
     // {

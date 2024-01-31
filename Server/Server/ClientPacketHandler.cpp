@@ -69,10 +69,7 @@ namespace DawnNet
 		joinPkt.set_success(true);		
 		
 		auto sendBuffer = ClientPacketHandler::MakeSendBuffer(joinPkt);
-		IOContext::Instance().Post(std::bind(
-			&SessionManager::BroadCast, 
-			&SessionManager::Instance(), sendBuffer
-		));
+		session->Send(sendBuffer);
 
 		return true;
 	}

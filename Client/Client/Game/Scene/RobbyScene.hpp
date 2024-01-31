@@ -22,4 +22,5 @@ public:
 
 private:
     GameLayer* _layer;
+    Entity _loadingScreen;
 };

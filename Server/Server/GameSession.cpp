@@ -40,9 +40,12 @@ void GameSession::OnRecvPacket(BYTE *buffer, int32 len)
     PacketSessionRef session = GetPacketSessionRef();
     DawnNet::PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
     
+    std::cout << header->id << " Packet recieved\n";
     ClientPacketHandler::HandlePacket(session, buffer, len);
+
 }
 
 void GameSession::OnSend(int32 len)
 {
+    std::cout << len << " Packet send\n";
 }

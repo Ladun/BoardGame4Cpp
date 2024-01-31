@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     {
         DawnNet::GThreadManager->Launch([](){
 
-            // 원래는 ThreadManager로 관리를 해야 하지만, 
+            // Job 실행 등의 작업을 원래는 ThreadManager로 관리를 해야 하지만, 
             // boost asio에서는 알아서 관리해주기 때문에 RUN만 함.
 
             DawnNet::IOContext::Instance().Run();
