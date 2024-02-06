@@ -4,7 +4,7 @@
 
 using namespace DawnStar;
 
-class SceneWrapper
+class SceneWrapper : public std::enable_shared_from_this<SceneWrapper>
 {
 public:
     SceneWrapper(std::string name) 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneWrapper.hpp"
+#include <Game/Scene/SceneWrapper.hpp>
 
 class GameLayer;
 

@@ -21,9 +21,9 @@ namespace DawnBoard
         virtual bool ApplyAction(Action& action) = 0;
 
         template<typename StateClass>
-        StateClass* GetState() { return reinterpret_cast<StateClass*>(m_State.get()); }
+        StateClass* GetState() { return reinterpret_cast<StateClass*>(_state.get()); }
 
     protected:
-        std::unique_ptr<FieldState> m_State = nullptr;
+        std::unique_ptr<FieldState> _state = nullptr;
     };
 } // namespace DawnBoard

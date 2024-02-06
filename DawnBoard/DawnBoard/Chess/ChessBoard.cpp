@@ -13,10 +13,10 @@ namespace DawnBoard::Chess
 
     void ChessBoard::Init()
     {
-        if(m_State != nullptr)
+        if(_state != nullptr)
             return;
 
-        m_State = std::make_unique<ChessBoardState>();
+        _state = std::make_unique<ChessBoardState>();
         ChessBoardState* state = GetState<ChessBoardState>();
 
         const int type[8] = {1, 2, 3, 4, 5, 3, 2, 1};

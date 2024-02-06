@@ -13,13 +13,16 @@ namespace DawnNet
 		PKT_S_LOGIN = 1001,
 		PKT_C_JOIN = 1002,
 		PKT_S_JOIN = 1003,
-		PKT_C_CHAT = 1004,
-		PKT_S_CHAT = 1005,
+		PKT_C_ACTION = 1004,
+		PKT_S_ACTION = 1005,
+		PKT_C_CHAT = 1006,
+		PKT_S_CHAT = 1007,
 	};
 
 	bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 	bool Handle_S_LOGIN(PacketSessionRef& session, Protocol::S_LOGIN& pkt);
 	bool Handle_S_JOIN(PacketSessionRef& session, Protocol::S_JOIN& pkt);
+	bool Handle_S_ACTION(PacketSessionRef& session, Protocol::S_ACTION& pkt);
 	bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt);
 
 
@@ -32,6 +35,7 @@ namespace DawnNet
 				GPacketHandler[i] = Handle_INVALID;
 			GPacketHandler[PKT_S_LOGIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_LOGIN>(Handle_S_LOGIN, session, buffer, len); };
 			GPacketHandler[PKT_S_JOIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_JOIN>(Handle_S_JOIN, session, buffer, len); };
+			GPacketHandler[PKT_S_ACTION] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_ACTION>(Handle_S_ACTION, session, buffer, len); };
 			GPacketHandler[PKT_S_CHAT] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_CHAT>(Handle_S_CHAT, session, buffer, len); };
 		}
 
@@ -42,6 +46,7 @@ namespace DawnNet
 		}
 		static SendBufferRef MakeSendBuffer(Protocol::C_LOGIN& pkt) { return MakeSendBuffer(pkt, PKT_C_LOGIN); }
 		static SendBufferRef MakeSendBuffer(Protocol::C_JOIN& pkt) { return MakeSendBuffer(pkt, PKT_C_JOIN); }
+		static SendBufferRef MakeSendBuffer(Protocol::C_ACTION& pkt) { return MakeSendBuffer(pkt, PKT_C_ACTION); }
 		static SendBufferRef MakeSendBuffer(Protocol::C_CHAT& pkt) { return MakeSendBuffer(pkt, PKT_C_CHAT); }
 
 	private:

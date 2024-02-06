@@ -3,6 +3,11 @@
 
 #include "NetworkManager.hpp"
 #include <Game/Scene/RobbyScene.hpp>
+#include <Game/Scene/GameScene.hpp>
+
+#include <DawnBoard/Chess/ChessObject.hpp>
+
+using namespace DawnBoard::Chess;
 
 namespace DawnNet
 {
@@ -35,11 +40,28 @@ namespace DawnNet
 		if(pkt.success())
 		{
 			layer->ChangeScene("Game");
+			auto scene = static_pointer_cast<GameScene>(layer->GetCurrentScene());
+
+			scene->SetPlayerColor(IntToPieceColor(pkt.currentplayercolor()));
 		}
 		else
 		{
 			static_pointer_cast<RobbyScene>(layer->GetCurrentScene())->ControlLoadingScreen(false);
 		}
+
+		return true;
+	}
+
+	bool Handle_S_ACTION(PacketSessionRef& session, Protocol::S_ACTION& pkt)
+	{
+		const auto layer = NetworkManager::Instance().GetLayer();
+		// If current scene is not "Robby", it's wrong packet
+		if(layer->GetCurrentScene()->GetName() != "Game")
+		{
+			return true;
+		}
+		static_pointer_cast<GameScene>(layer->GetCurrentScene())->ApplyAction(pkt);
+		
 
 		return true;
 	}

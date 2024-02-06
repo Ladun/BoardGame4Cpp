@@ -7,6 +7,9 @@
 
 #include <DawnNet/Network/IOContext.hpp>
 
+#include <DawnBoard/Chess/ChessAction.hpp>
+using namespace DawnBoard::Chess;
+
 namespace DawnNet
 {
 
@@ -64,15 +67,51 @@ namespace DawnNet
 			room.get(), gameSession->_player
 		));
 
-		// Send Packet
-		Protocol::S_JOIN joinPkt;
-		joinPkt.set_success(true);		
+		return true;
+	}
+
+	bool Handle_C_ACTION(PacketSessionRef& session, Protocol::C_ACTION& pkt)
+	{
+		Ref<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+		Ref<Room> room = gameSession->GetRoom();
+		if(room == nullptr)
+		{
+			return false;
+		}
+
+		switch(pkt.type())
+		{
+			case Protocol::ActionType::SELECT:
+			{
+				auto act = SelectAction({pkt.x(), pkt.y()}, IntToPieceColor(pkt.color()));
+				room->GetChessBoard()->ApplyAction(act);
+				break;
+			}
+			case Protocol::ActionType::MOVE:
+			{
+				auto act = MoveAction({pkt.x(), pkt.y()}, IntToPieceColor(pkt.color()));
+				if(room->GetChessBoard()->ApplyAction(act))
+				{
+					// if checkmake, finish the game and send finish packet
+				}
+				break;
+			}
+		}
 		
-		auto sendBuffer = ClientPacketHandler::MakeSendBuffer(joinPkt);
-		session->Send(sendBuffer);
+		// Send Packet
+		Protocol::S_ACTION actionPkt;
+		actionPkt.set_type(pkt.type());	
+		actionPkt.set_x(pkt.x());	
+		actionPkt.set_y(pkt.y());	
+		actionPkt.set_color(pkt.color());	
+		
+		auto sendBuffer = ClientPacketHandler::MakeSendBuffer(actionPkt);
+		room->Broadcast(sendBuffer);
 
 		return true;
 	}
+
+	// TODO: Add restart button and packets
 
 	bool Handle_C_CHAT(PacketSessionRef& session, Protocol::C_CHAT& pkt)
 	{

@@ -30,6 +30,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
@@ -46,6 +47,9 @@ struct TableStruct_Protocol_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto;
 namespace Protocol {
+class C_ACTION;
+struct C_ACTIONDefaultTypeInternal;
+extern C_ACTIONDefaultTypeInternal _C_ACTION_default_instance_;
 class C_CHAT;
 struct C_CHATDefaultTypeInternal;
 extern C_CHATDefaultTypeInternal _C_CHAT_default_instance_;
@@ -55,6 +59,9 @@ extern C_JOINDefaultTypeInternal _C_JOIN_default_instance_;
 class C_LOGIN;
 struct C_LOGINDefaultTypeInternal;
 extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
+class S_ACTION;
+struct S_ACTIONDefaultTypeInternal;
+extern S_ACTIONDefaultTypeInternal _S_ACTION_default_instance_;
 class S_CHAT;
 struct S_CHATDefaultTypeInternal;
 extern S_CHATDefaultTypeInternal _S_CHAT_default_instance_;
@@ -66,15 +73,42 @@ struct S_LOGINDefaultTypeInternal;
 extern S_LOGINDefaultTypeInternal _S_LOGIN_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::C_ACTION* Arena::CreateMaybeMessage<::Protocol::C_ACTION>(Arena*);
 template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Arena*);
 template<> ::Protocol::C_JOIN* Arena::CreateMaybeMessage<::Protocol::C_JOIN>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
+template<> ::Protocol::S_ACTION* Arena::CreateMaybeMessage<::Protocol::S_ACTION>(Arena*);
 template<> ::Protocol::S_CHAT* Arena::CreateMaybeMessage<::Protocol::S_CHAT>(Arena*);
 template<> ::Protocol::S_JOIN* Arena::CreateMaybeMessage<::Protocol::S_JOIN>(Arena*);
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
+enum ActionType : int {
+  SELECT = 0,
+  MOVE = 1,
+  ActionType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ActionType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool ActionType_IsValid(int value);
+constexpr ActionType ActionType_MIN = SELECT;
+constexpr ActionType ActionType_MAX = MOVE;
+constexpr int ActionType_ARRAYSIZE = ActionType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ActionType_descriptor();
+template<typename T>
+inline const std::string& ActionType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ActionType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ActionType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ActionType_descriptor(), enum_t_value);
+}
+inline bool ActionType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ActionType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ActionType>(
+    ActionType_descriptor(), name, value);
+}
 // ===================================================================
 
 class C_LOGIN final :
@@ -319,26 +353,26 @@ class S_LOGIN final :
     kPlayersFieldNumber = 2,
     kSuccessFieldNumber = 1,
   };
-  // repeated int32 players = 2;
+  // repeated uint64 players = 2;
   int players_size() const;
   private:
   int _internal_players_size() const;
   public:
   void clear_players();
   private:
-  int32_t _internal_players(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+  uint64_t _internal_players(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
       _internal_players() const;
-  void _internal_add_players(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+  void _internal_add_players(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
       _internal_mutable_players();
   public:
-  int32_t players(int index) const;
-  void set_players(int index, int32_t value);
-  void add_players(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+  uint64_t players(int index) const;
+  void set_players(int index, uint64_t value);
+  void add_players(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
       players() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
       mutable_players();
 
   // bool success = 1;
@@ -358,7 +392,7 @@ class S_LOGIN final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > players_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > players_;
     mutable std::atomic<int> _players_cached_byte_size_;
     bool success_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -609,27 +643,28 @@ class S_JOIN final :
   enum : int {
     kPlayersFieldNumber = 2,
     kSuccessFieldNumber = 1,
+    kCurrentPlayerColorFieldNumber = 3,
   };
-  // repeated int32 players = 2;
+  // repeated uint64 players = 2;
   int players_size() const;
   private:
   int _internal_players_size() const;
   public:
   void clear_players();
   private:
-  int32_t _internal_players(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+  uint64_t _internal_players(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
       _internal_players() const;
-  void _internal_add_players(int32_t value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+  void _internal_add_players(uint64_t value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
       _internal_mutable_players();
   public:
-  int32_t players(int index) const;
-  void set_players(int index, int32_t value);
-  void add_players(int32_t value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+  uint64_t players(int index) const;
+  void set_players(int index, uint64_t value);
+  void add_players(uint64_t value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
       players() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
       mutable_players();
 
   // bool success = 1;
@@ -641,6 +676,15 @@ class S_JOIN final :
   void _internal_set_success(bool value);
   public:
 
+  // int32 currentPlayerColor = 3;
+  void clear_currentplayercolor();
+  int32_t currentplayercolor() const;
+  void set_currentplayercolor(int32_t value);
+  private:
+  int32_t _internal_currentplayercolor() const;
+  void _internal_set_currentplayercolor(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_JOIN)
  private:
   class _Internal;
@@ -649,9 +693,372 @@ class S_JOIN final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t > players_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t > players_;
     mutable std::atomic<int> _players_cached_byte_size_;
     bool success_;
+    int32_t currentplayercolor_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class C_ACTION final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_ACTION) */ {
+ public:
+  inline C_ACTION() : C_ACTION(nullptr) {}
+  ~C_ACTION() override;
+  explicit PROTOBUF_CONSTEXPR C_ACTION(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_ACTION(const C_ACTION& from);
+  C_ACTION(C_ACTION&& from) noexcept
+    : C_ACTION() {
+    *this = ::std::move(from);
+  }
+
+  inline C_ACTION& operator=(const C_ACTION& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_ACTION& operator=(C_ACTION&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_ACTION& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_ACTION* internal_default_instance() {
+    return reinterpret_cast<const C_ACTION*>(
+               &_C_ACTION_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(C_ACTION& a, C_ACTION& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_ACTION* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_ACTION* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_ACTION* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_ACTION>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const C_ACTION& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const C_ACTION& from) {
+    C_ACTION::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(C_ACTION* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_ACTION";
+  }
+  protected:
+  explicit C_ACTION(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTypeFieldNumber = 1,
+    kXFieldNumber = 2,
+    kYFieldNumber = 3,
+    kColorFieldNumber = 4,
+  };
+  // .Protocol.ActionType type = 1;
+  void clear_type();
+  ::Protocol::ActionType type() const;
+  void set_type(::Protocol::ActionType value);
+  private:
+  ::Protocol::ActionType _internal_type() const;
+  void _internal_set_type(::Protocol::ActionType value);
+  public:
+
+  // int32 x = 2;
+  void clear_x();
+  int32_t x() const;
+  void set_x(int32_t value);
+  private:
+  int32_t _internal_x() const;
+  void _internal_set_x(int32_t value);
+  public:
+
+  // int32 y = 3;
+  void clear_y();
+  int32_t y() const;
+  void set_y(int32_t value);
+  private:
+  int32_t _internal_y() const;
+  void _internal_set_y(int32_t value);
+  public:
+
+  // int32 color = 4;
+  void clear_color();
+  int32_t color() const;
+  void set_color(int32_t value);
+  private:
+  int32_t _internal_color() const;
+  void _internal_set_color(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_ACTION)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int type_;
+    int32_t x_;
+    int32_t y_;
+    int32_t color_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_ACTION final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_ACTION) */ {
+ public:
+  inline S_ACTION() : S_ACTION(nullptr) {}
+  ~S_ACTION() override;
+  explicit PROTOBUF_CONSTEXPR S_ACTION(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_ACTION(const S_ACTION& from);
+  S_ACTION(S_ACTION&& from) noexcept
+    : S_ACTION() {
+    *this = ::std::move(from);
+  }
+
+  inline S_ACTION& operator=(const S_ACTION& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_ACTION& operator=(S_ACTION&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_ACTION& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_ACTION* internal_default_instance() {
+    return reinterpret_cast<const S_ACTION*>(
+               &_S_ACTION_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(S_ACTION& a, S_ACTION& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_ACTION* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_ACTION* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_ACTION* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_ACTION>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_ACTION& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_ACTION& from) {
+    S_ACTION::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_ACTION* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_ACTION";
+  }
+  protected:
+  explicit S_ACTION(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTypeFieldNumber = 1,
+    kXFieldNumber = 2,
+    kYFieldNumber = 3,
+    kColorFieldNumber = 4,
+  };
+  // .Protocol.ActionType type = 1;
+  void clear_type();
+  ::Protocol::ActionType type() const;
+  void set_type(::Protocol::ActionType value);
+  private:
+  ::Protocol::ActionType _internal_type() const;
+  void _internal_set_type(::Protocol::ActionType value);
+  public:
+
+  // int32 x = 2;
+  void clear_x();
+  int32_t x() const;
+  void set_x(int32_t value);
+  private:
+  int32_t _internal_x() const;
+  void _internal_set_x(int32_t value);
+  public:
+
+  // int32 y = 3;
+  void clear_y();
+  int32_t y() const;
+  void set_y(int32_t value);
+  private:
+  int32_t _internal_y() const;
+  void _internal_set_y(int32_t value);
+  public:
+
+  // int32 color = 4;
+  void clear_color();
+  int32_t color() const;
+  void set_color(int32_t value);
+  private:
+  int32_t _internal_color() const;
+  void _internal_set_color(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_ACTION)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int type_;
+    int32_t x_;
+    int32_t y_;
+    int32_t color_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -707,7 +1114,7 @@ class C_CHAT final :
                &_C_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(C_CHAT& a, C_CHAT& b) {
     a.Swap(&b);
@@ -876,7 +1283,7 @@ class S_CHAT final :
                &_S_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(S_CHAT& a, S_CHAT& b) {
     a.Swap(&b);
@@ -1041,7 +1448,7 @@ inline void S_LOGIN::set_success(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.success)
 }
 
-// repeated int32 players = 2;
+// repeated uint64 players = 2;
 inline int S_LOGIN::_internal_players_size() const {
   return _impl_.players_.size();
 }
@@ -1051,38 +1458,38 @@ inline int S_LOGIN::players_size() const {
 inline void S_LOGIN::clear_players() {
   _impl_.players_.Clear();
 }
-inline int32_t S_LOGIN::_internal_players(int index) const {
+inline uint64_t S_LOGIN::_internal_players(int index) const {
   return _impl_.players_.Get(index);
 }
-inline int32_t S_LOGIN::players(int index) const {
+inline uint64_t S_LOGIN::players(int index) const {
   // @@protoc_insertion_point(field_get:Protocol.S_LOGIN.players)
   return _internal_players(index);
 }
-inline void S_LOGIN::set_players(int index, int32_t value) {
+inline void S_LOGIN::set_players(int index, uint64_t value) {
   _impl_.players_.Set(index, value);
   // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.players)
 }
-inline void S_LOGIN::_internal_add_players(int32_t value) {
+inline void S_LOGIN::_internal_add_players(uint64_t value) {
   _impl_.players_.Add(value);
 }
-inline void S_LOGIN::add_players(int32_t value) {
+inline void S_LOGIN::add_players(uint64_t value) {
   _internal_add_players(value);
   // @@protoc_insertion_point(field_add:Protocol.S_LOGIN.players)
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
 S_LOGIN::_internal_players() const {
   return _impl_.players_;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
 S_LOGIN::players() const {
   // @@protoc_insertion_point(field_list:Protocol.S_LOGIN.players)
   return _internal_players();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
 S_LOGIN::_internal_mutable_players() {
   return &_impl_.players_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
 S_LOGIN::mutable_players() {
   // @@protoc_insertion_point(field_mutable_list:Protocol.S_LOGIN.players)
   return _internal_mutable_players();
@@ -1116,7 +1523,7 @@ inline void S_JOIN::set_success(bool value) {
   // @@protoc_insertion_point(field_set:Protocol.S_JOIN.success)
 }
 
-// repeated int32 players = 2;
+// repeated uint64 players = 2;
 inline int S_JOIN::_internal_players_size() const {
   return _impl_.players_.size();
 }
@@ -1126,41 +1533,229 @@ inline int S_JOIN::players_size() const {
 inline void S_JOIN::clear_players() {
   _impl_.players_.Clear();
 }
-inline int32_t S_JOIN::_internal_players(int index) const {
+inline uint64_t S_JOIN::_internal_players(int index) const {
   return _impl_.players_.Get(index);
 }
-inline int32_t S_JOIN::players(int index) const {
+inline uint64_t S_JOIN::players(int index) const {
   // @@protoc_insertion_point(field_get:Protocol.S_JOIN.players)
   return _internal_players(index);
 }
-inline void S_JOIN::set_players(int index, int32_t value) {
+inline void S_JOIN::set_players(int index, uint64_t value) {
   _impl_.players_.Set(index, value);
   // @@protoc_insertion_point(field_set:Protocol.S_JOIN.players)
 }
-inline void S_JOIN::_internal_add_players(int32_t value) {
+inline void S_JOIN::_internal_add_players(uint64_t value) {
   _impl_.players_.Add(value);
 }
-inline void S_JOIN::add_players(int32_t value) {
+inline void S_JOIN::add_players(uint64_t value) {
   _internal_add_players(value);
   // @@protoc_insertion_point(field_add:Protocol.S_JOIN.players)
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
 S_JOIN::_internal_players() const {
   return _impl_.players_;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >&
 S_JOIN::players() const {
   // @@protoc_insertion_point(field_list:Protocol.S_JOIN.players)
   return _internal_players();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
 S_JOIN::_internal_mutable_players() {
   return &_impl_.players_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< uint64_t >*
 S_JOIN::mutable_players() {
   // @@protoc_insertion_point(field_mutable_list:Protocol.S_JOIN.players)
   return _internal_mutable_players();
+}
+
+// int32 currentPlayerColor = 3;
+inline void S_JOIN::clear_currentplayercolor() {
+  _impl_.currentplayercolor_ = 0;
+}
+inline int32_t S_JOIN::_internal_currentplayercolor() const {
+  return _impl_.currentplayercolor_;
+}
+inline int32_t S_JOIN::currentplayercolor() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_JOIN.currentPlayerColor)
+  return _internal_currentplayercolor();
+}
+inline void S_JOIN::_internal_set_currentplayercolor(int32_t value) {
+  
+  _impl_.currentplayercolor_ = value;
+}
+inline void S_JOIN::set_currentplayercolor(int32_t value) {
+  _internal_set_currentplayercolor(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_JOIN.currentPlayerColor)
+}
+
+// -------------------------------------------------------------------
+
+// C_ACTION
+
+// .Protocol.ActionType type = 1;
+inline void C_ACTION::clear_type() {
+  _impl_.type_ = 0;
+}
+inline ::Protocol::ActionType C_ACTION::_internal_type() const {
+  return static_cast< ::Protocol::ActionType >(_impl_.type_);
+}
+inline ::Protocol::ActionType C_ACTION::type() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ACTION.type)
+  return _internal_type();
+}
+inline void C_ACTION::_internal_set_type(::Protocol::ActionType value) {
+  
+  _impl_.type_ = value;
+}
+inline void C_ACTION::set_type(::Protocol::ActionType value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ACTION.type)
+}
+
+// int32 x = 2;
+inline void C_ACTION::clear_x() {
+  _impl_.x_ = 0;
+}
+inline int32_t C_ACTION::_internal_x() const {
+  return _impl_.x_;
+}
+inline int32_t C_ACTION::x() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ACTION.x)
+  return _internal_x();
+}
+inline void C_ACTION::_internal_set_x(int32_t value) {
+  
+  _impl_.x_ = value;
+}
+inline void C_ACTION::set_x(int32_t value) {
+  _internal_set_x(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ACTION.x)
+}
+
+// int32 y = 3;
+inline void C_ACTION::clear_y() {
+  _impl_.y_ = 0;
+}
+inline int32_t C_ACTION::_internal_y() const {
+  return _impl_.y_;
+}
+inline int32_t C_ACTION::y() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ACTION.y)
+  return _internal_y();
+}
+inline void C_ACTION::_internal_set_y(int32_t value) {
+  
+  _impl_.y_ = value;
+}
+inline void C_ACTION::set_y(int32_t value) {
+  _internal_set_y(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ACTION.y)
+}
+
+// int32 color = 4;
+inline void C_ACTION::clear_color() {
+  _impl_.color_ = 0;
+}
+inline int32_t C_ACTION::_internal_color() const {
+  return _impl_.color_;
+}
+inline int32_t C_ACTION::color() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_ACTION.color)
+  return _internal_color();
+}
+inline void C_ACTION::_internal_set_color(int32_t value) {
+  
+  _impl_.color_ = value;
+}
+inline void C_ACTION::set_color(int32_t value) {
+  _internal_set_color(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_ACTION.color)
+}
+
+// -------------------------------------------------------------------
+
+// S_ACTION
+
+// .Protocol.ActionType type = 1;
+inline void S_ACTION::clear_type() {
+  _impl_.type_ = 0;
+}
+inline ::Protocol::ActionType S_ACTION::_internal_type() const {
+  return static_cast< ::Protocol::ActionType >(_impl_.type_);
+}
+inline ::Protocol::ActionType S_ACTION::type() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ACTION.type)
+  return _internal_type();
+}
+inline void S_ACTION::_internal_set_type(::Protocol::ActionType value) {
+  
+  _impl_.type_ = value;
+}
+inline void S_ACTION::set_type(::Protocol::ActionType value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ACTION.type)
+}
+
+// int32 x = 2;
+inline void S_ACTION::clear_x() {
+  _impl_.x_ = 0;
+}
+inline int32_t S_ACTION::_internal_x() const {
+  return _impl_.x_;
+}
+inline int32_t S_ACTION::x() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ACTION.x)
+  return _internal_x();
+}
+inline void S_ACTION::_internal_set_x(int32_t value) {
+  
+  _impl_.x_ = value;
+}
+inline void S_ACTION::set_x(int32_t value) {
+  _internal_set_x(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ACTION.x)
+}
+
+// int32 y = 3;
+inline void S_ACTION::clear_y() {
+  _impl_.y_ = 0;
+}
+inline int32_t S_ACTION::_internal_y() const {
+  return _impl_.y_;
+}
+inline int32_t S_ACTION::y() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ACTION.y)
+  return _internal_y();
+}
+inline void S_ACTION::_internal_set_y(int32_t value) {
+  
+  _impl_.y_ = value;
+}
+inline void S_ACTION::set_y(int32_t value) {
+  _internal_set_y(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ACTION.y)
+}
+
+// int32 color = 4;
+inline void S_ACTION::clear_color() {
+  _impl_.color_ = 0;
+}
+inline int32_t S_ACTION::_internal_color() const {
+  return _impl_.color_;
+}
+inline int32_t S_ACTION::color() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ACTION.color)
+  return _internal_color();
+}
+inline void S_ACTION::_internal_set_color(int32_t value) {
+  
+  _impl_.color_ = value;
+}
+inline void S_ACTION::set_color(int32_t value) {
+  _internal_set_color(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ACTION.color)
 }
 
 // -------------------------------------------------------------------
@@ -1404,10 +1999,24 @@ inline void S_CHAT::set_allocated_msg(std::string* msg) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace Protocol
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::Protocol::ActionType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ActionType>() {
+  return ::Protocol::ActionType_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

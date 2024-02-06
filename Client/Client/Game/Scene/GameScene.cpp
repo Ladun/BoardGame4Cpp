@@ -9,6 +9,7 @@
 #include "../Systems/ChessGraphicSystem.hpp"
 
 #include <DawnBoard/Chess/ChessBoardState.hpp>
+#include <DawnBoard/Chess/ChessAction.hpp>
 
 #include <imgui.h>
 
@@ -20,7 +21,7 @@ GameScene::GameScene(GameLayer* layer) : SceneWrapper("Game"), _layer(layer)
 void GameScene::OnAttach()
 {
     _scene->OnViewportResize(Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight());
-	_scene->AddSystem(CreateRef<IndicatorSystem>(_scene, _chessBoard));
+	_scene->AddSystem(CreateRef<IndicatorSystem>(_scene, shared_from_this(), _chessBoard));
 	_scene->AddSystem(CreateRef<ChessGraphicSystem>(_scene, _chessBoard));
 
 	// Load resource
@@ -30,14 +31,14 @@ void GameScene::OnAttach()
 	_chessBoard->Init();
 
     { // Indicator
-		Entity indicator = _scene->CreateEntity("indicator");
-		indicator.AddComponent<IndicatorComponent>();
+		_indicator = _scene->CreateEntity("indicator");
+		_indicator.AddComponent<IndicatorComponent>();
 
-		auto& transform = indicator.GetTransform();
+		auto& transform = _indicator.GetTransform();
 		transform.Scale = glm::vec3(0.6f);
 		transform.Translation.z = 2.0f;
 
-		auto& sprite = indicator.AddComponent<SpriteRendererComponent>();
+		auto& sprite = _indicator.AddComponent<SpriteRendererComponent>();
 		sprite.Color = {0.3f, 0.8f, 0.3f, 0.5f};
 		sprite.SortingOrder = 10;
 
@@ -168,4 +169,26 @@ std::string GameScene::GetTextureNameByPieceType(PieceType type, PieceColor colo
 
 void GameScene::ResetBoard()
 {
+}
+
+void GameScene::ApplyAction(Protocol::S_ACTION &pkt)
+{
+	switch(pkt.type())
+	{
+		case Protocol::ActionType::SELECT:
+		{
+			auto& transform = _indicator.GetTransform();
+			transform.Translation.x = pkt.x();
+			transform.Translation.y = pkt.y();
+			auto act = SelectAction({pkt.x(), pkt.y()}, IntToPieceColor(pkt.color()));
+            _chessBoard->ApplyAction(act);
+			break;
+		}
+		case Protocol::ActionType::MOVE:
+		{
+			auto act = MoveAction({pkt.x(), pkt.y()}, IntToPieceColor(pkt.color()));
+			_chessBoard->ApplyAction(act);
+			break;
+		}
+	}		
 }

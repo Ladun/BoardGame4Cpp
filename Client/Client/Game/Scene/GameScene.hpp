@@ -3,7 +3,8 @@
 
 #include <DawnBoard/Chess/ChessBoard.hpp>
 
-#include "SceneWrapper.hpp"
+#include <Game/Scene/SceneWrapper.hpp>
+#include <Network/NetworkManager.hpp>
 
 using namespace DawnBoard::Chess;
 
@@ -26,8 +27,15 @@ public:
 // Content Method
 public:
     void ResetBoard();
+    void ApplyAction(Protocol::S_ACTION& pkt);
+
+    PieceColor GetPlayerColor() { return _playerColor; }
+    void SetPlayerColor(PieceColor color) { _playerColor = color; }
 
 private:
     GameLayer* _layer;
+    Entity _indicator;
+
 	Ref<ChessBoard> _chessBoard;
+    PieceColor      _playerColor;
 };

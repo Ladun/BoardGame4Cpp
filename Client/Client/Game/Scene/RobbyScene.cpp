@@ -2,7 +2,7 @@
 #include "RobbyScene.hpp"
 #include "../GameLayer.hpp"
 
-#include "../../Network/NetworkManager.hpp"
+#include <Network/NetworkManager.hpp>
 
 #include <DawnStar/Game/UI/UISystem.hpp>
 

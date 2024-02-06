@@ -3,11 +3,12 @@
 
 #include "../../Utils/Utils.hpp"
 #include "CustomComponent.hpp"
+#include <Network/NetworkManager.hpp>
 
 #include <DawnBoard/Chess/ChessAction.hpp>
 
-IndicatorSystem::IndicatorSystem(Ref<Scene>& scene, Ref<ChessBoard>& chessBoard)
-    : SystemBase(scene), _chessBoard(chessBoard), _currentPlayer(PieceColor::WHITE)
+IndicatorSystem::IndicatorSystem(Ref<Scene>& scene, Ref<SceneWrapper> sceneWrapper, Ref<ChessBoard>& chessBoard)
+    : SystemBase(scene), _sceneWrapper(sceneWrapper), _chessBoard(chessBoard)
 {
 }
 
@@ -35,6 +36,11 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
         
         if(Input::IsMouseButtonDown(Mouse::Any))
         {
+            if(_chessBoard->GetState<ChessBoardState>()->currentColor != GetGameScene()->GetPlayerColor())
+            {
+                continue;
+            }
+
             auto pos = ToScreenCoord(Input::GetMousePosition());
 
             pos = ScreenToWorldCoord(pos, _scene->GetPrimaryCameraEntity());
@@ -47,23 +53,38 @@ void IndicatorSystem::OnUpdate(Timestep ts, entt::registry &registry)
             
             if(Input::IsMouseButtonDown(Mouse::ButtonLeft))
             {
-                transform.Translation.x = pos.x;
-                transform.Translation.y = pos.y;
+                // For Single plays
+                // transform.Translation.x = pos.x;
+                // transform.Translation.y = pos.y;
+                // auto act = SelectAction({pos.x, pos.y}, _currentPlayer);
+                // _chessBoard->ApplyAction(act);
 
-                auto act = SelectAction({pos.x, pos.y}, _currentPlayer);
-                _chessBoard->ApplyAction(act);
+                Protocol::C_ACTION actionPkt;
+                actionPkt.set_type(Protocol::ActionType::SELECT);
+                actionPkt.set_x(pos.x);
+                actionPkt.set_y(pos.y);
+                actionPkt.set_color(PieceColorToInt(GetGameScene()->GetPlayerColor()));
+                NetworkManager::Instance().Send(actionPkt);                
             }
             else if(Input::IsMouseButtonDown(Mouse::ButtonRight))
             {
                 if(state->selectedObj != nullptr)
-                {
-                    auto act = MoveAction({pos.x, pos.y}, _currentPlayer);
-                    // TODO: maybe delete, current just for single
-                    if(_chessBoard->ApplyAction(act))
-                    {
-                        int color = (PieceColorToInt(_currentPlayer) + 1) % 2;
-                        _currentPlayer = IntToPieceColor(color);
-                    }
+                {   
+
+                    // For Single plays
+                    // auto act = MoveAction({pos.x, pos.y}, _currentPlayer);
+                    // if(_chessBoard->ApplyAction(act))
+                    // {
+                    //     int color = (PieceColorToInt(_currentPlayer) + 1) % 2;
+                    //     _currentPlayer = IntToPieceColor(color);
+                    // }
+
+                    Protocol::C_ACTION actionPkt;
+                    actionPkt.set_type(Protocol::ActionType::MOVE);
+                    actionPkt.set_x(pos.x);
+                    actionPkt.set_y(pos.y);
+                    actionPkt.set_color(PieceColorToInt(GetGameScene()->GetPlayerColor()));
+                    NetworkManager::Instance().Send(actionPkt);    
                 }
             }
         }

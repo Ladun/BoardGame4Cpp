@@ -1,6 +1,15 @@
 syntax = "proto3";
 package Protocol;
 
+
+enum ActionType
+{
+	SELECT=0;
+	MOVE=1;
+}
+
+// ================================================
+
 message C_LOGIN
 {
 	
@@ -21,6 +30,23 @@ message S_JOIN
 {
 	bool success = 1;
 	repeated uint64 players = 2;
+	int32 currentPlayerColor = 3;
+}
+
+message C_ACTION
+{
+	ActionType type = 1;
+	int32 x = 2;
+	int32 y = 3;
+	int32 color = 4;
+}
+
+message S_ACTION
+{
+	ActionType type = 1;
+	int32 x = 2;
+	int32 y = 3;
+	int32 color = 4;
 }
 
 message C_CHAT
