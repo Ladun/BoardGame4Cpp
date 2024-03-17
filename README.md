@@ -29,5 +29,5 @@ make
 and move the Client executable file to the `bin` directory
 
 ## Images
-[](https://github.com/Ladun/BoardGame4Cpp/blob/master/imgs/game0.png)
-[](https://github.com/Ladun/BoardGame4Cpp/blob/master/imgs/game1.png)
+![](https://github.com/Ladun/BoardGame4Cpp/blob/master/imgs/game0.png)
+![](https://github.com/Ladun/BoardGame4Cpp/blob/master/imgs/game1.png)
