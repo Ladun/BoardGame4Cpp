@@ -119,7 +119,7 @@ void GameScene::OnAttach()
 		auto& transform = cameraObj.GetComponent<TransformComponent>();
 		transform.Translation = {4.0f, 4.0f, 12.0f};
 		auto& cam = cameraObj.AddComponent<CameraComponent>();
-		cam.Cam.SetOrthographic(40, -100.0f, 100.0f);
+		cam.Cam.SetOrthographic(20, -100.0f, 100.0f);
 	}
 
 	_scene->SortComponents<SpriteRendererComponent>(

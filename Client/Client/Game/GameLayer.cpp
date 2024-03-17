@@ -36,7 +36,15 @@ void GameLayer::OnDetach()
 void GameLayer::OnUpdate(Timestep ts)
 {
 	Renderer2D::ResetStats();
-	RenderCommand::SetClearColor({0.4f, 0.4f, 0.4f, 1.0f});
+	if (_currentScene->GetName() == "Game")
+	{
+		int c = PieceColorToInt(static_pointer_cast<GameScene>(_currentScene)->GetPlayerColor()) ;
+		RenderCommand::SetClearColor({glm::vec3(c - 0.2f * (c - 0.5f) * 2), 1.0f});
+	}
+	else
+	{
+		RenderCommand::SetClearColor({0.4f, 0.4f, 0.4f, 1.0f});
+	}
 	RenderCommand::Clear();
 
 	_currentScene->OnUpdate(ts);

@@ -22,10 +22,13 @@ void RobbyScene::OnAttach()
         auto& layout = entity.AddComponent<UI::LayoutComponent>();
         layout.AnchorMax = layout.AnchorMin = {0.5, 0.5};
         layout.Pivot = {0.5, 0.5};
-        layout.Box = {400, 340, 80, 40};
-        
-		auto& sprite = entity.AddComponent<UI::SpriteRendererComponent>();
-		sprite.SortingOrder = 8;
+        layout.Box = {0, 20, 170, 30};
+
+        auto& text = entity.AddComponent<TextComponent>();
+        text.TextString = "Connect to Server";
+        text.FontSize = 25;
+        text.SetHorizontalCenter();
+        text.SetVerticalCenter();
 
         auto& button = entity.AddComponent<UI::ButtonComponent>();
         button.normalColor  = {0.3f, 0.8f, 0.3f, 0.5f};
@@ -35,16 +38,23 @@ void RobbyScene::OnAttach()
             ControlLoadingScreen(true);
             NetworkManager::Instance().Connect("127.0.0.1", "8888");
         };
+        
+		auto& sprite = entity.AddComponent<UI::SpriteRendererComponent>();
+		sprite.SortingOrder = 8;
+        sprite.Color = button.normalColor;
     }
     {
         Entity entity = _scene->CreateEntity("Try to join Button");
         auto& layout = entity.AddComponent<UI::LayoutComponent>();
         layout.AnchorMax = layout.AnchorMin = {0.5, 0.5};
         layout.Pivot = {0.5, 0.5};
-        layout.Box = {400, 290, 70, 40};
-        
-		auto& sprite = entity.AddComponent<UI::SpriteRendererComponent>();
-		sprite.SortingOrder = 9;
+        layout.Box = {0, -20, 110, 30};
+
+        auto& text = entity.AddComponent<TextComponent>();
+        text.TextString = "Join game";
+        text.FontSize = 25;
+        text.SetHorizontalCenter();
+        text.SetVerticalCenter();
 
         auto& button = entity.AddComponent<UI::ButtonComponent>();
         button.normalColor  = {0.8f, 0.8f, 0.3f, 0.5f};
@@ -56,6 +66,10 @@ void RobbyScene::OnAttach()
             Protocol::C_JOIN pkt;
             NetworkManager::Instance().Send(pkt);
         };
+        
+		auto& sprite = entity.AddComponent<UI::SpriteRendererComponent>();
+		sprite.SortingOrder = 9;
+        sprite.Color = button.normalColor;
     }
     { // Create Loading Screen
 
@@ -65,6 +79,7 @@ void RobbyScene::OnAttach()
         layout.AnchorMin = {0.0f, 0.0f};
         layout.Pivot = {0.5, 0.5};
         layout.Box = {0, 0, 0, 0};
+        layout.Interactable = false;
 
         auto& transform = entity.GetTransform();
         transform.Translation.z = .02f;
@@ -72,7 +87,7 @@ void RobbyScene::OnAttach()
 		auto& sprite = entity.AddComponent<UI::SpriteRendererComponent>();
         sprite.Color = {0.0f, 0.0f, 0.0f, 0.8f};
 		sprite.SortingOrder = 11;
-        sprite.Interactable = true;
+        sprite.Enable = false;
 
         _loadingScreen = entity;
     }
@@ -103,5 +118,7 @@ void RobbyScene::OnImGuiRender()
 void RobbyScene::ControlLoadingScreen(bool run)
 {
     auto& sprite = _loadingScreen.GetComponent<UI::SpriteRendererComponent>();
+    auto& layout = _loadingScreen.GetComponent<UI::LayoutComponent>();
+    layout.Interactable = run;
     sprite.Enable = run;
 }

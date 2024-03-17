@@ -10,6 +10,8 @@ using namespace DawnBoard::Chess;
 struct ChessPieceComponent
 {
     ChessObjectRef piece;
+    bool captured = false;
+
     // For animation
     Pos currentPos;
     bool doAnimation = false;

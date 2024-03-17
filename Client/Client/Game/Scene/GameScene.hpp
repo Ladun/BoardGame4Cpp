@@ -35,6 +35,7 @@ public:
 private:
     GameLayer* _layer;
     Entity _indicator;
+    Entity _colorIndicator;
 
 	Ref<ChessBoard> _chessBoard;
     PieceColor      _playerColor;

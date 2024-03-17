@@ -23,4 +23,9 @@ protected:
 private:
     Ref<ChessBoard> _chessBoard;
 
+    int _blackCaptured = 0;
+    int _whiteCaptured = 0;
+
+    const int _capturedMaxColumn = 5;
+
 };

@@ -13,15 +13,29 @@ ChessGraphicSystem::ChessGraphicSystem(Ref<Scene>& scene, Ref<ChessBoard>& chess
 
 void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
 {
+    // TODO: King 움직이면 오류 생김.
     // Piece update
     const auto view1 = registry.view<TransformComponent, SpriteRendererComponent, ChessPieceComponent>();
     bool updateSpriteOrder = false;
-    for(auto it = view1.begin(); it != view1.end();)
+    for(auto it = view1.begin(); it != view1.end(); it++)
     {
         auto &&[transform, sprite, pieceInfo] = view1.get(*it);
         if(pieceInfo.piece->m_Captured)
         {
-            _scene->DestroyEntity({*it, _scene.get()});
+            if(pieceInfo.captured)
+                continue;
+            pieceInfo.captured = true;
+            
+            if(pieceInfo.piece->m_Color == PieceColor::BLACK)
+            {
+                transform.Translation = {_blackCaptured % _capturedMaxColumn + 8.5, -_blackCaptured / _capturedMaxColumn, 0};
+                _blackCaptured++;
+            }
+            else
+            {
+                transform.Translation = {_whiteCaptured % _capturedMaxColumn + 8.5, _whiteCaptured / _capturedMaxColumn + 7, 0};
+                _whiteCaptured++;
+            }
         }
         else
         {
@@ -55,7 +69,6 @@ void ChessGraphicSystem::OnUpdate(Timestep ts, entt::registry &registry)
             }            
 
             transform.Translation = {dstX, dstY, pieceInfo.doAnimation};
-            it++;                                     
         }
     }
     if(updateSpriteOrder)
